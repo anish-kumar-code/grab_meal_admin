@@ -1,0 +1,110 @@
+import { Breadcrumb, Button, Input, Modal } from 'antd'
+import React, { useState } from 'react'
+import { FaPlus } from 'react-icons/fa'
+import { Link } from 'react-router'
+import SubCategoryTable from '../SubCategory/components/SubCategoryTable'
+import AddSubCategoryModel from '../SubCategory/components/AddSubCategoryModel'
+import EditSubCategoryModel from '../SubCategory/components/EditSubCategoryModel'
+
+function SubCategory() {
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [searchText, setSearchText] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState(null);
+
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleOk = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
+
+    const showEditModal = (category) => {
+        setSelectedCategory(category);
+        setIsEditModalOpen(true);
+    };
+
+    const handleEditOk = () => {
+        setIsEditModalOpen(false);
+        setSelectedCategory(null);
+    };
+
+    const handleEditCancel = () => {
+        setIsEditModalOpen(false);
+        setSelectedCategory(null);
+    };
+
+    const handleDelete = (category) => {
+        Modal.confirm({
+            title: 'Delete Sub-Category',
+            content: `Are you sure you want to delete "${category.subCategoryName}"?`,
+            okText: 'Delete',
+            okType: 'danger',
+            cancelText: 'Cancel',
+            onOk: () => {
+                console.log('Deleting category:', category);
+            }
+        });
+    };
+
+    return (
+        <>
+            <div className='px-4'>
+                <Breadcrumb
+                    items={[
+                        {
+                            title: <Link to={'/'}>Dashboard</Link>,
+                        },
+                        {
+                            title: "Sub-Category",
+                        }
+                    ]}
+                />
+            </div>
+            <div className='lg:px-10 px-5 my-8 md:flex items-center gap-4 justify-between '>
+                <Input.Search
+                    placeholder="Search by name"
+                    onChange={(e) => setSearchText(e.target.value)}
+                    style={{
+                        maxWidth: 300,
+                        borderRadius: '6px'
+                    }}
+                    size="large"
+                />
+                <Button
+                    type='primary'
+                    icon={<FaPlus />}
+                    size="large"
+                    className="hover:opacity-90 transition-all duration-300"
+                    onClick={showModal}
+                >
+                    Add Sub Category
+                </Button>
+            </div>
+            <SubCategoryTable searchText={searchText} onEdit={showEditModal} onDelete={handleDelete} />
+
+            {/* modal */}
+            <AddSubCategoryModel
+                isModalOpen={isModalOpen}
+                handleOk={handleOk}
+                handleCancel={handleCancel}
+            />
+
+            {/* edit modal */}
+            <EditSubCategoryModel
+                isModalOpen={isEditModalOpen}
+                handleOk={handleEditOk}
+                handleCancel={handleEditCancel}
+                categoryData={selectedCategory}
+            />
+        </>
+    )
+}
+
+export default SubCategory

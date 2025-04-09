@@ -1,0 +1,110 @@
+import React, { useState } from 'react'
+import { Breadcrumb, Input, Button, Modal } from 'antd'
+import { Link } from 'react-router'
+import { FaPlus } from 'react-icons/fa'
+import FoodProductTable from './components/FoodProductTable'
+import AddFoodProductModel from './components/AddFoodProductModal'
+import EditFoodProductModel from './components/EditFoodProductModal'
+
+function FoodProduct() {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [searchText, setSearchText] = useState('');
+    const [selectedProduct, setSelectedProduct] = useState(null);
+
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleOk = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
+
+    const showEditModal = (product) => {
+        setSelectedProduct(product);
+        setIsEditModalOpen(true);
+    };
+
+    const handleEditOk = () => {
+        setIsEditModalOpen(false);
+        setSelectedProduct(null);
+    };
+
+    const handleEditCancel = () => {
+        setIsEditModalOpen(false);
+        setSelectedProduct(null);
+    };
+
+    const handleDelete = (product) => {
+        Modal.confirm({
+            title: 'Are you sure you want to delete this product?',
+            content: `This will permanently delete "${product.product_name}"`,
+            okText: 'Yes, Delete',
+            okType: 'danger',
+            cancelText: 'No, Cancel',
+            onOk() {
+                // Here you would typically make an API call to delete the product
+                console.log('Deleting product:', product);
+            },
+        });
+    };
+
+    return (
+        <>
+            <div className='px-4'>
+                <Breadcrumb
+                    items={[
+                        {
+                            title: <Link to={'/'}>Dashboard</Link>,
+                        },
+                        {
+                            title: "Food Products",
+                        }
+                    ]}
+                />
+            </div>
+            <div className='lg:px-10 px-5 my-8 md:flex items-center gap-4 justify-between '>
+                <Input.Search
+                    placeholder="Search by product name"
+                    onChange={(e) => setSearchText(e.target.value)}
+                    style={{
+                        maxWidth: 300,
+                        borderRadius: '6px'
+                    }}
+                    size="large"
+                />
+                <Button
+                    type='primary'
+                    icon={<FaPlus />}
+                    size="large"
+                    className="hover:opacity-90 transition-all duration-300"
+                    onClick={showModal}
+                >
+                    Add Food Product
+                </Button>
+            </div>
+            <FoodProductTable searchText={searchText} onEdit={showEditModal} onDelete={handleDelete} />
+
+            {/* Add Product Modal */}
+            <AddFoodProductModel
+                isModalOpen={isModalOpen}
+                handleOk={handleOk}
+                handleCancel={handleCancel}
+            />
+
+            {/* Edit Product Modal */}
+            <EditFoodProductModel
+                isModalOpen={isEditModalOpen}
+                handleOk={handleEditOk}
+                handleCancel={handleEditCancel}
+                productData={selectedProduct}
+            />
+        </>
+    )
+}
+
+export default FoodProduct
