@@ -1,110 +1,115 @@
-import { Breadcrumb, Button, Input, Modal } from 'antd'
-import React, { useState } from 'react'
-import { FaPlus } from 'react-icons/fa'
-import { Link } from 'react-router'
-import SubCategoryTable from '../SubCategory/components/SubCategoryTable'
-import AddSubCategoryModel from '../SubCategory/components/AddSubCategoryModel'
-import EditSubCategoryModel from '../SubCategory/components/EditSubCategoryModel'
+import React, { useEffect, useState } from 'react';
+import { Breadcrumb, Button, Input, message, Modal, Spin } from 'antd';
+import { FaPlus } from 'react-icons/fa';
+import { Link } from 'react-router';
+import SubCategoryTable from '../SubCategory/components/SubCategoryTable';
+import AddSubCategoryModel from '../SubCategory/components/AddSubCategoryModel';
+import EditSubCategoryModel from '../SubCategory/components/EditSubCategoryModel';
+import { deleteCategory, getAllSubCategory } from '../../services/apiCategory';
 
 function SubCategory() {
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [subcategories, setSubcategories] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [searchText, setSearchText] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editMode, setEditMode] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
 
-    const showModal = () => {
+    const fetchSubcategories = async () => {
+        setLoading(true);
+        try {
+            const data = await getAllSubCategory();
+            setSubcategories(data);
+        } catch {
+            message.error('Failed to load subcategories.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => { fetchSubcategories(); }, []);
+
+    const openModal = (category = null) => {
+        setSelectedCategory(category);
+        setEditMode(!!category);
         setIsModalOpen(true);
     };
 
-    const handleOk = () => {
+    const closeModal = (updated = false) => {
         setIsModalOpen(false);
-    };
-
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    };
-
-    const showEditModal = (category) => {
-        setSelectedCategory(category);
-        setIsEditModalOpen(true);
-    };
-
-    const handleEditOk = () => {
-        setIsEditModalOpen(false);
         setSelectedCategory(null);
-    };
-
-    const handleEditCancel = () => {
-        setIsEditModalOpen(false);
-        setSelectedCategory(null);
+        if (updated) fetchSubcategories();
     };
 
     const handleDelete = (category) => {
         Modal.confirm({
             title: 'Delete Sub-Category',
-            content: `Are you sure you want to delete "${category.subCategoryName}"?`,
-            okText: 'Delete',
+            content: `Are you sure you want to delete "${category.name}"?`,
             okType: 'danger',
-            cancelText: 'Cancel',
-            onOk: () => {
-                console.log('Deleting category:', category);
+            onOk: async () => {
+                try {
+                    await deleteCategory(category._id);
+                    message.success('Subcategory deleted successfully!');
+                    fetchSubcategories();
+                } catch {
+                    message.error('Failed to delete subcategory.');
+                }
             }
         });
     };
+
+    if (loading) return <Spin size="large" fullscreen />;
 
     return (
         <>
             <div className='px-4'>
                 <Breadcrumb
                     items={[
-                        {
-                            title: <Link to={'/'}>Dashboard</Link>,
-                        },
-                        {
-                            title: "Sub-Category",
-                        }
+                        { title: <Link to="/">Dashboard</Link> },
+                        { title: 'Sub-Category' },
                     ]}
                 />
             </div>
-            <div className='lg:px-10 px-5 my-8 md:flex items-center gap-4 justify-between '>
+            <div className='lg:px-10 px-5 my-8 md:flex items-center gap-4 justify-between'>
                 <Input.Search
                     placeholder="Search by name"
                     onChange={(e) => setSearchText(e.target.value)}
-                    style={{
-                        maxWidth: 300,
-                        borderRadius: '6px'
-                    }}
+                    style={{ maxWidth: 300, borderRadius: '6px' }}
                     size="large"
                 />
                 <Button
-                    type='primary'
+                    type="primary"
                     icon={<FaPlus />}
                     size="large"
-                    className="hover:opacity-90 transition-all duration-300"
-                    onClick={showModal}
+                    onClick={() => openModal()}
                 >
                     Add Sub Category
                 </Button>
             </div>
-            <SubCategoryTable searchText={searchText} onEdit={showEditModal} onDelete={handleDelete} />
 
-            {/* modal */}
-            <AddSubCategoryModel
-                isModalOpen={isModalOpen}
-                handleOk={handleOk}
-                handleCancel={handleCancel}
+            <SubCategoryTable
+                searchText={searchText}
+                data={subcategories}
+                onEdit={openModal}
+                onDelete={handleDelete}
             />
 
-            {/* edit modal */}
-            <EditSubCategoryModel
-                isModalOpen={isEditModalOpen}
-                handleOk={handleEditOk}
-                handleCancel={handleEditCancel}
-                categoryData={selectedCategory}
-            />
+            {editMode ? (
+                <EditSubCategoryModel
+                    isModalOpen={isModalOpen}
+                    handleOk={() => closeModal(true)}
+                    handleCancel={() => closeModal(false)}
+                    categoryData={selectedCategory}
+                />
+            ) : (
+                <AddSubCategoryModel
+                    isModalOpen={isModalOpen}
+                    handleOk={() => closeModal(true)}
+                    handleCancel={() => closeModal(false)}
+                />
+            )}
         </>
-    )
+    );
 }
 
-export default SubCategory
+export default SubCategory;

@@ -12,7 +12,7 @@ const CategoryTable = ({ searchText,data, onEdit, onDelete }) => {
             key: 'avatar',
             align: "center",
             render: (_, { image }) => (
-                <Avatar size={40} >
+                <Avatar size={60} style={{ backgroundColor: '#fff' , boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'}}>
                     {image ? <img src={`${BASE_URL}/${image}`}/> : "?"}
                 </Avatar>
             )
@@ -44,10 +44,6 @@ const CategoryTable = ({ searchText,data, onEdit, onDelete }) => {
             )
         }
     ];
-
-    const onChange = checked => {
-        console.log(`switch to ${checked}`);
-    };
 
     const filtredData = data.filter((item) => item.name.toLowerCase().includes(searchText.toLowerCase()))
 

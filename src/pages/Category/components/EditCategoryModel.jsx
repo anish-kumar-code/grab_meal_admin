@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Form, Input, message, Upload } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { updateCategory } from '../../../services/apiCategory';
+import dataURLtoFile from '../../../utils/fileConverter';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 function EditCategoryModel({ isModalOpen, handleOk, handleCancel, categoryData }) {
@@ -38,6 +40,7 @@ function EditCategoryModel({ isModalOpen, handleOk, handleCancel, categoryData }
                 setImageUrl(reader.result);
             };
             reader.readAsDataURL(info.file);
+            form.setFieldsValue({ image: info.file });
         }
     };
 
@@ -48,10 +51,26 @@ function EditCategoryModel({ isModalOpen, handleOk, handleCancel, categoryData }
         </div>
     );
 
-    const handleSubmit = (values) => {
-        message.success('Category updated successfully!');
-        form.resetFields();
-        handleOk();
+    const handleSubmit = async (values) => {
+
+        const formData = new FormData();
+        formData.append("name", values.categoryName)
+        if (imageUrl && imageUrl !== categoryData.image && imageUrl.startsWith("data:")) {
+            const file = dataURLtoFile(imageUrl, "category.png");
+            formData.append("image", file);
+        }
+
+        setLoading(true);
+        try {
+            await updateCategory(categoryData._id, formData);
+            message.success('Category updated successfully!');
+            form.resetFields();
+            handleOk();
+        } catch (error) {
+            message.error('Error updating category');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -77,7 +96,7 @@ function EditCategoryModel({ isModalOpen, handleOk, handleCancel, categoryData }
                     <Input placeholder='Enter Category Name' />
                 </Form.Item>
 
-                <Form.Item label="Category Image" name="image">
+                <Form.Item label="Category Image" name="image" valuePropName='file'>
                     <Upload
                         name="image"
                         listType="picture-card"
@@ -88,7 +107,7 @@ function EditCategoryModel({ isModalOpen, handleOk, handleCancel, categoryData }
                     >
                         {imageUrl ? (
                             <img
-                                src={`${BASE_URL}/${imageUrl}`}
+                                src={imageUrl.startsWith('data:') ? imageUrl : `${BASE_URL}/${imageUrl}`}
                                 alt="Preview"
                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                             />
