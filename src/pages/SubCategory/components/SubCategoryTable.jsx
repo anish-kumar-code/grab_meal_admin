@@ -10,7 +10,7 @@ const SubCategoryTable = ({ searchText, data, onEdit, onDelete }) => {
             key: 'avatar',
             align: "center",
             render: (_, { image }) => (
-                <Avatar size={60} style={{ backgroundColor: '#fff' , boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'}}>{image ? <img src={`${BASE_URL}/${image}`} /> : "?"}</Avatar>
+                <Avatar size={60} style={{ backgroundColor: '#fff', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}>{image ? <img src={`${BASE_URL}/${image}`} /> : "?"}</Avatar>
             )
         },
         {

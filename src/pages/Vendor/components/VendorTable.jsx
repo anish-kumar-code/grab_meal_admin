@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
 import { getAllVendor, vendorApprove, vendorBlock } from '../../../services/apiVendor';
 import { FaUserTie } from 'react-icons/fa6';
+import { Tooltip } from 'antd';
+import { IoStorefront } from 'react-icons/io5';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const VendorTable = ({ searchText, onDelete }) => {
@@ -110,8 +112,8 @@ const VendorTable = ({ searchText, onDelete }) => {
             align: "right",
             render: (_, record) => (
                 <Space size="small">
-                    <Button type="primary" icon={<IoMdEye />} onClick={() => handleViewDetails(record)}></Button>
-                    {/* <Button type="primary" danger icon={<FaTrash />} onClick={() => onDelete(record)}></Button> */}
+                    <Tooltip title="Products"><Button type="primary" icon={<IoStorefront />} onClick={() => navigate(`/vendor/${record._id}/products`)}></Button></Tooltip>
+                    <Tooltip title="Details"><Button type="primary" icon={<IoMdEye />} onClick={() => handleViewDetails(record)}></Button></Tooltip>
                 </Space>
             )
         }

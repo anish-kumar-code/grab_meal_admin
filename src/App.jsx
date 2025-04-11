@@ -7,12 +7,14 @@ import Category from './pages/Category/Category'
 import SubCategory from './pages/SubCategory/SubCategory'
 import Vendor from './pages/Vendor/Vendor'
 import VendorDetails from './pages/Vendor/components/VendorDetails'
+import VendorProducts from './pages/Vendor/components/VendorProducts'
 import User from './pages/User/User'
 import Settings from './pages/Settings/Settings'
 import FoodProduct from './pages/Food-Product/FoodProduct'
 import GroceryProduct from './pages/Grocery-Product/GroceryProduct'
 import Login from './pages/Auth/Login'
 import PrivateRoute from './components/PrivateRoute'
+import ProductDetails from './pages/Products/ProductDetails'
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
           <Route path='/sub-category' element={<SubCategory />} />
           <Route path='/vendor' element={<Vendor />} />
           <Route path='/vendor/:id' element={<VendorDetails />} />
+          <Route path='/vendor/:id/products' element={<VendorProducts />} />
+          <Route path='/products/:id' element={<ProductDetails />} />
           <Route path='/user' element={<User />} />
           <Route path='/settings' element={<Settings />} />
         </Route>
