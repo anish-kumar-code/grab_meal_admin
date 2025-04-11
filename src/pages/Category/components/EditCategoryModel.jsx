@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Form, Input, message, Upload } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 function EditCategoryModel({ isModalOpen, handleOk, handleCancel, categoryData }) {
     const [form] = Form.useForm();
@@ -87,7 +88,7 @@ function EditCategoryModel({ isModalOpen, handleOk, handleCancel, categoryData }
                     >
                         {imageUrl ? (
                             <img
-                                src={imageUrl}
+                                src={`${BASE_URL}/${imageUrl}`}
                                 alt="Preview"
                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                             />

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, message } from 'antd';
 import { useAuth } from '../../context/AuthContext';
-// import axios from "../../utils/axiosInstance";
-import axios from "axios";
+import axiosInstance from '../../utils/axiosInstance';
 import { useNavigate } from 'react-router';
 
 function Login() {
@@ -15,7 +14,7 @@ function Login() {
         console.log(values)
         setLoading(true);
         try {
-            const res = await axios.post('http://localhost:5001/api/admin/login', values);
+            const res = await axiosInstance.post('/api/admin/login', values);
             console.log(res)
             if (res.data.status) {
                 login(res.data.data.user, res.data.token);

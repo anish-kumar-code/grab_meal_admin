@@ -1,21 +1,26 @@
-import { Avatar, Button, Space, Switch, Table } from 'antd'
+import { Avatar, Button, Space, Spin, Switch, Table } from 'antd'
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import dataSource from '../data.json'
+import { useEffect, useState } from 'react';
+import { getAllCategory, updateStatus } from '../../../services/apiCategory';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-const CategoryTable = ({ searchText, onEdit, onDelete }) => {
+const CategoryTable = ({ searchText,data, onEdit, onDelete }) => {
+
     const columns = [
         {
-            title: 'Avatar',
+            title: 'Image',
             key: 'avatar',
             align: "center",
             render: (_, { image }) => (
-                <Avatar size={40} style={{ backgroundColor: '#f56a00' }}>{image[0]}</Avatar>
+                <Avatar size={40} >
+                    {image ? <img src={`${BASE_URL}/${image}`}/> : "?"}
+                </Avatar>
             )
         },
         {
             title: 'Name',
-            dataIndex: 'categoryName',
-            key: 'categoryName',
+            dataIndex: 'name',
+            key: 'name',
             align: "center"
         },
         {
@@ -23,8 +28,8 @@ const CategoryTable = ({ searchText, onEdit, onDelete }) => {
             dataIndex: 'status',
             key: 'status',
             align: "center",
-            render: (_, { name }) => (
-                <Switch onChange={onChange} />
+            render: (_, record) => (
+                <Switch defaultChecked={record?.status === "active"} onChange={(checked)=> updateStatus(record._id,checked)} />
             )
         },
         {
@@ -44,9 +49,13 @@ const CategoryTable = ({ searchText, onEdit, onDelete }) => {
         console.log(`switch to ${checked}`);
     };
 
+    const filtredData = data.filter((item) => item.name.toLowerCase().includes(searchText.toLowerCase()))
+
     return <Table
-        dataSource={dataSource.filter(item => item.categoryName.toLowerCase().includes(searchText.toLowerCase()))}
+        // dataSource={dataSource.filter(item => item.categoryName.toLowerCase().includes(searchText.toLowerCase()))}
+        dataSource={filtredData}
         columns={columns}
+        rowKey={"_id"}
         scroll={{ x: true }}
         bordered={false}
         size='small'

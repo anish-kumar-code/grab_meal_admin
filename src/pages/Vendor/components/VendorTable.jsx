@@ -1,68 +1,34 @@
 import { Avatar, Button, Space, Spin, Switch, Table, Tag } from 'antd'
-import { FaEdit, FaTrash } from 'react-icons/fa';
-import dataSource from '../data.json'
+import { FaTrash } from 'react-icons/fa';
 import { IoMdEye } from 'react-icons/io';
 import { useNavigate } from 'react-router';
-import axiosInstance from '../../../utils/axiosInstance';
 import { useEffect, useState } from 'react';
+import { getAllVendor, vendorApprove, vendorBlock } from '../../../services/apiVendor';
+import { FaUserTie } from 'react-icons/fa6';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const VendorTable = ({ searchText, onDelete }) => {
     const navigate = useNavigate();
     const [dataSource, setDataSource] = useState([]);
     const [loading, setLoading] = useState(false);
-    console.log(dataSource)
-    // Transform the data to match table structure
-    // const transformedData = dataSource.map(item => ({
-    //     id: item.id,
-    //     vendorname: item.owner_name,
-    //     shopname: item.shop_name,
-    //     username: item.user_id,
-    //     mobileno: item.mobile_no,
-    //     email: item.email,
-    //     services: item.service_id,
-    //     approve: item.isApproved ? 'Yes' : 'No',
-    //     block: item.isBlock ? 'Yes' : 'No',
-    //     categoryName: item.type,
-    //     isApproved: item.isApproved,
-    //     isBlocked: item.isBlock,
-    //     image: item.profileImage || item.owner_name[0]
-    // }));
+
     useEffect(() => {
-        const fetchVendors = async () => {
+        setLoading(true)
+        const fetchVendor = async () => {
             try {
-                setLoading(true);
-                const response = await axiosInstance.get('/api/admin/vendor/list');
-                const vendors = response.data.data.vendors;
-
-                const transformedData = vendors.map(item => ({
-                    id: item._id,
-                    vendorname: item.owner_name,
-                    shopname: item.shop_name,
-                    username: item.user_id,
-                    mobileno: item.mobile_no,
-                    email: item.email,
-                    services: item.service_id,
-                    approve: item.isApproved ? 'Yes' : 'No',
-                    block: item.isBlock ? 'Yes' : 'No',
-                    categoryName: item.type,
-                    isApproved: item.isApproved,
-                    isBlocked: item.isBlock,
-                    image: item.profileImage || item.owner_name[0]
-                }));
-
-                setDataSource(transformedData);
+                const res = await getAllVendor()
+                setDataSource(res)
             } catch (error) {
-                console.error('Error fetching vendor list:', error);
+                console.log(error)
             } finally {
-                setLoading(false);
+                setLoading(false)
             }
-        };
-
-        fetchVendors();
-    }, []);
+        }
+        fetchVendor()
+    }, [])
 
     const handleViewDetails = (record) => {
-        navigate(`/vendor/${record.id}`);
+        navigate(`/vendor/${record._id}`);
     };
 
     const columns = [
@@ -70,34 +36,35 @@ const VendorTable = ({ searchText, onDelete }) => {
             title: 'Avatar',
             key: 'avatar',
             align: "center",
-            render: (_, { image }) => (
+            render: (_, { profileImage, owner_name }) => (
                 <Avatar size={40} style={{ backgroundColor: '#f56a00' }}>
-                    {image || '?'}
+                    {/* {image || '?'} */}
+                    {profileImage ? <img src={`${BASE_URL}/${profileImage}`} alt={owner_name} /> : <FaUserTie />}
                 </Avatar>
             )
         },
         {
             title: 'Owner Name',
-            dataIndex: 'vendorname',
-            key: 'vendorname',
+            dataIndex: 'owner_name',
+            key: 'owner_name',
             align: "center"
         },
         {
             title: 'Shop Name',
-            dataIndex: 'shopname',
-            key: 'shopname',
+            dataIndex: 'shop_name',
+            key: 'shop_name',
             align: "center"
         },
         {
             title: 'User Name',
-            dataIndex: 'username',
-            key: 'username',
+            dataIndex: 'user_id',
+            key: 'user_id',
             align: "center"
         },
         {
             title: 'Mobile no',
-            dataIndex: 'mobileno',
-            key: 'mobileno',
+            dataIndex: 'mobile_no',
+            key: 'mobile_no',
             align: "center"
         },
         {
@@ -108,8 +75,8 @@ const VendorTable = ({ searchText, onDelete }) => {
         },
         {
             title: 'Services',
-            dataIndex: 'services',
-            key: 'services',
+            dataIndex: 'service_id',
+            key: 'service_id',
             align: "center",
             render: (services) => (
                 <Space size={[0, 8]} wrap>
@@ -119,24 +86,24 @@ const VendorTable = ({ searchText, onDelete }) => {
                 </Space>
             )
         },
-        // {
-        //     title: 'Approve',
-        //     dataIndex: 'isApproved',
-        //     key: 'isApproved',
-        //     align: "center",
-        //     render: (_, { isApproved }) => (
-        //         <Switch defaultChecked={isApproved} onChange={onChange} />
-        //     )
-        // },
-        // {
-        //     title: 'Block',
-        //     dataIndex: 'isBlocked',
-        //     key: 'isBlocked',
-        //     align: "center",
-        //     render: (_, { isBlocked }) => (
-        //         <Switch defaultChecked={isBlocked} onChange={onChange} />
-        //     )
-        // },
+        {
+            title: 'Approve',
+            dataIndex: 'isApproved',
+            key: 'isApproved',
+            align: "center",
+            render: (_, record) => (
+                <Switch defaultChecked={record.isApproved} onChange={(checked) => vendorApprove(record._id, checked)} />
+            )
+        },
+        {
+            title: 'Block',
+            dataIndex: 'isBlock',
+            key: 'isBlock',
+            align: "center",
+            render: (_, record) => (
+                <Switch defaultChecked={record.isBlock} onChange={(checked) => vendorBlock(record._id, checked)} />
+            )
+        },
         {
             title: 'Action',
             key: 'action',
@@ -144,24 +111,20 @@ const VendorTable = ({ searchText, onDelete }) => {
             render: (_, record) => (
                 <Space size="small">
                     <Button type="primary" icon={<IoMdEye />} onClick={() => handleViewDetails(record)}></Button>
-                    {/* <Button type="primary" icon={<FaEdit />} onClick={() => onEdit(record)}>Edit</Button> */}
                     {/* <Button type="primary" danger icon={<FaTrash />} onClick={() => onDelete(record)}></Button> */}
                 </Space>
             )
         }
     ];
 
-    const onChange = checked => {
-        console.log(`switch to ${checked}`);
-    };
+    const filtredData = dataSource.filter(item => item.owner_name?.toLowerCase().includes(searchText.toLowerCase()))
 
     if (loading) return <Spin size="large" fullscreen />
 
     return <Table
-        dataSource={dataSource.filter(item => item.vendorname.toLowerCase().includes(searchText.toLowerCase()))}
-        // dataSource={transformedData}
+        dataSource={filtredData}
         columns={columns}
-        rowKey="id"
+        rowKey="_id"
         scroll={{ x: true }}
         bordered={false}
         size='small'

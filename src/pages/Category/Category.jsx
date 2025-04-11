@@ -1,16 +1,35 @@
-import { Breadcrumb, Button, Input, Modal } from 'antd';
-import React, { useState } from 'react'
+import { Breadcrumb, Button, Input, message, Modal, Spin } from 'antd';
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router';
-import { FaPlus} from 'react-icons/fa';
+import { FaPlus } from 'react-icons/fa';
 import CategoryTable from './components/CategoryTable';
 import AddCategoryModel from './components/AddCategoryModel';
 import EditCategoryModel from './components/EditCategoryModel';
+import { getAllCategory } from '../../services/apiCategory';
 
 function Category() {
+    const [categories, setCategories] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [selectedCategory, setSelectedCategory] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    const fetchCategories = async () => {
+        setLoading(true);
+        try {
+            const data = await getAllCategory();
+            setCategories(data);
+        } catch (err) {
+            message.error("Failed to load categories.");
+        } finally {
+            setLoading(false)
+        }
+    };
+
+    useEffect(() => {
+        fetchCategories();
+    }, []);
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -18,6 +37,7 @@ function Category() {
 
     const handleOk = () => {
         setIsModalOpen(false);
+        fetchCategories();
     };
 
     const handleCancel = () => {
@@ -53,6 +73,8 @@ function Category() {
         });
     };
 
+    if (loading) return <Spin size="large" fullscreen />
+
     return (
         <>
             <div className='px-4'>
@@ -87,7 +109,7 @@ function Category() {
                     Add Category
                 </Button>
             </div>
-            <CategoryTable searchText={searchText} onEdit={showEditModal} onDelete={handleDelete} />
+            <CategoryTable searchText={searchText} data={categories} onEdit={showEditModal} onDelete={handleDelete} />
 
             {/* modal */}
             <AddCategoryModel

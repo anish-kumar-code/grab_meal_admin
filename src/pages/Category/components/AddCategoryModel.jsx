@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { Modal, Form, Input, message, Upload } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { addCategory, getAllCategory } from '../../../services/apiCategory';
+import dataURLtoFile from '../../../utils/fileConverter';
 
 function AddCategoryModel({ isModalOpen, handleOk, handleCancel }) {
     const [form] = Form.useForm();
@@ -38,11 +40,30 @@ function AddCategoryModel({ isModalOpen, handleOk, handleCancel }) {
         </div>
     );
 
-    const handleSubmit = (values) => {
-        message.success('Category added successfully!');
-        form.resetFields();
-        setImageUrl(null);
-        handleOk();
+    const handleSubmit = async (values) => {
+        // console.log(values)
+
+        if (!imageUrl) {
+            return message.error("Please upload a category image.");
+        }
+
+        const file = dataURLtoFile(imageUrl, "category.png");
+        const formData = new FormData();
+        formData.append("name", values.categoryName);
+        formData.append("image", file);
+        try {
+            setLoading(true);
+            await addCategory(formData);
+            message.success('Category added successfully!');
+            form.resetFields();
+            setImageUrl(null);
+            handleOk();
+            getAllCategory()
+        } catch (error) {
+            message.error("Failed to add category.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (

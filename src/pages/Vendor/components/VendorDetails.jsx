@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router";
 import dataSource from '../data.json';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import axiosInstance from "../../../utils/axiosInstance";
+import { getVendorDetails } from "../../../services/apiVendor";
 
 const VendorDetails = () => {
     const { id } = useParams();
@@ -21,29 +22,53 @@ const VendorDetails = () => {
     // if (!vendorData) {
     //     return <div>Loading...</div>;
     // }
+
+    // getVendorDetails(id)
+
     useEffect(() => {
-        const fetchVendor = async () => {
+        const fetchVendorDetails = async () => {
             try {
-                const response = await axiosInstance.get("/api/admin/vendor/list");
-                const vendors = response.data.data.vendors;
-                const matchedVendor = vendors.find(v => v._id === id);
-                if (matchedVendor) {
-                    setVendorData({
-                        vendor: matchedVendor,
-                        vendorAccountDetails: matchedVendor.bank_details || {},
-                        shopTime: matchedVendor.shopTime || { schedule: [] }
-                    });
-                }
+                const res = await getVendorDetails(id);
+                setVendorData({
+                    vendor: res.vendor,
+                    vendorAccountDetails: res.bankDetails,
+                    shopTime: res.shopTime
+                })
             } catch (error) {
-                console.error("Error fetching vendor details:", error);
-            } finally {
+                message.error('Error fetching vendor details');
+            }
+            finally {
                 setLoading(false);
             }
-        };
+        }
+        fetchVendorDetails()
+    }, [id])
 
-        fetchVendor();
-    }, [id]);
-    if (loading || !vendorData) return <Spin size="large" fullscreen/>;
+    console.log(vendorData)
+
+    // useEffect(() => {
+    //     const fetchVendor = async () => {
+    //         try {
+    //             const response = await axiosInstance.get("/api/admin/vendor/list");
+    //             const vendors = response.data.data.vendors;
+    //             const matchedVendor = vendors.find(v => v._id === id);
+    //             if (matchedVendor) {
+    //                 setVendorData({
+    //                     vendor: matchedVendor,
+    //                     vendorAccountDetails: matchedVendor.bank_details || {},
+    //                     shopTime: matchedVendor.shopTime || { schedule: [] }
+    //                 });
+    //             }
+    //         } catch (error) {
+    //             console.error("Error fetching vendor details:", error);
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+
+    //     fetchVendor();
+    // }, [id]);
+    if (loading || !vendorData) return <Spin size="large" fullscreen />;
     const { vendor, vendorAccountDetails, shopTime } = vendorData;
 
     const columns = [
@@ -89,9 +114,9 @@ const VendorDetails = () => {
                         <Descriptions.Item label="Owner Name">{vendor.owner_name}</Descriptions.Item>
                         <Descriptions.Item label="Shop Name">{vendor.shop_name}</Descriptions.Item>
                         <Descriptions.Item label="Mobile No">{vendor.mobile_no}</Descriptions.Item>
-                        <Descriptions.Item label="Alternate Phone">{vendor.alternate_phoneNo}</Descriptions.Item>
+                        <Descriptions.Item label="Alternate Phone">{vendor.alternate_phoneNo || "N/A"}</Descriptions.Item>
                         <Descriptions.Item label="Email">{vendor.email}</Descriptions.Item>
-                        <Descriptions.Item label="Type">{vendor.type?.toUpperCase()}</Descriptions.Item>
+                        {/* <Descriptions.Item label="Type">{vendor.type?.toUpperCase()}</Descriptions.Item> */}
                         <Descriptions.Item label="GST No">{vendor.gst_no || "N/A"}</Descriptions.Item>
                         <Descriptions.Item label="PAN No">{vendor.pan_no || "N/A"}</Descriptions.Item>
                         <Descriptions.Item label="Services">
@@ -101,7 +126,7 @@ const VendorDetails = () => {
                         </Descriptions.Item>
                         <Descriptions.Item label="Food License No">{vendor.food_license_no || "N/A"}</Descriptions.Item>
                         <Descriptions.Item label="Address">{vendor.address || "N/A"}</Descriptions.Item>
-                        {/* <Descriptions.Item label="Approved">
+                        <Descriptions.Item label="Approved">
                             <Tag color={vendor.isApproved ? "green" : "red"}>
                                 {vendor.isApproved ? "Yes" : "No"}
                             </Tag>
@@ -110,29 +135,43 @@ const VendorDetails = () => {
                             <Tag color={vendor.isBlock ? "red" : "green"}>
                                 {vendor.isBlock ? "Yes" : "No"}
                             </Tag>
-                        </Descriptions.Item> */}
+                        </Descriptions.Item>
                     </Descriptions>
                 </Card>
 
                 {/* Account Info */}
-                {/* <Card title="Bank Account Details" bordered>
+                {
+                    vendorData.vendorAccountDetails != null && (<Card title="Bank Account Details" bordered>
+                        <Descriptions column={2}>
+                            <Descriptions.Item label="Bank Name">{vendorAccountDetails.bankName || "N/A"}</Descriptions.Item>
+                            <Descriptions.Item label="Account No">{vendorAccountDetails.accountNo || "N/A"}</Descriptions.Item>
+                            <Descriptions.Item label="IFSC">{vendorAccountDetails.ifsc || "N/A"}</Descriptions.Item>
+                            <Descriptions.Item label="Branch">{vendorAccountDetails.branchName || "N/A"}</Descriptions.Item>
+                        </Descriptions>
+                    </Card>)
+                }
+
+                <Card title="Shop Details" bordered>
                     <Descriptions column={2}>
-                        <Descriptions.Item label="Bank Name">{vendorAccountDetails.bankName}</Descriptions.Item>
-                        <Descriptions.Item label="Account No">{vendorAccountDetails.accountNo}</Descriptions.Item>
-                        <Descriptions.Item label="IFSC">{vendorAccountDetails.ifsc}</Descriptions.Item>
-                        <Descriptions.Item label="Branch">{vendorAccountDetails.branchName}</Descriptions.Item>
+                        <Descriptions.Item label="Like">{vendor.like}</Descriptions.Item>
+                        <Descriptions.Item label="Followers">{vendor.followers}</Descriptions.Item>
+                        <Descriptions.Item label="Products">{vendor.productCount}</Descriptions.Item>
+                        {/* <Descriptions.Item label="Branch">{vendorAccountDetails.branchName}</Descriptions.Item> */}
                     </Descriptions>
-                </Card> */}
+                </Card>
+
 
                 {/* Shop Timing */}
-                {/* <Card title="Shop Schedule" bordered>
-                    <Table
-                        dataSource={shopTime.schedule}
-                        columns={columns}
-                        rowKey="_id"
-                        pagination={false}
-                    />
-                </Card> */}
+                {
+                    vendorData.shopTime != null && (<Card title="Shop Schedule" bordered>
+                        <Table
+                            dataSource={shopTime.schedule}
+                            columns={columns}
+                            rowKey="_id"
+                            pagination={false}
+                        />
+                    </Card>)
+                }
             </div>
         </div>
     );

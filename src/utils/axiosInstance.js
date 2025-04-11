@@ -1,10 +1,9 @@
-// src/utils/axiosInstance.js
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 import axios from "axios";
 
 const axiosInstance = axios.create({
-    baseURL: "http://91.108.111.52:5151", 
-    // baseURL: "http://localhost:5001", 
-    headers: {"Content-Type": "application/json"}
+    baseURL: BASE_URL,
+    headers: { "Content-Type": "application/json" }
 });
 
 // Add auth token automatically if exists
