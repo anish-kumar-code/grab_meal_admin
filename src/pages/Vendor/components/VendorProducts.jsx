@@ -1,44 +1,51 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table, Card, Button, Spin, message, Input, Breadcrumb, Switch, Space } from 'antd';
 import { useParams, useNavigate, Link } from 'react-router';
 import { ArrowLeftOutlined, EyeOutlined } from '@ant-design/icons';
-import vendorProducts from '../data/vendorProducts.json';
+import { getVendorProduct } from '../../../services/apiVendor';
+import { updateProductStatus } from '../../../services/apiProduct';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const VendorProducts = () => {
-    const { id } = useParams();
+    const {vendorSlug} = useParams()
+    const id = vendorSlug.split('-').pop();
+    const shopName = vendorSlug.replace(`-${id}`, '')
     const navigate = useNavigate();
-    const [products] = useState(vendorProducts);
-    const [loading] = useState(false);
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [searchText, setSearchText] = useState('');
 
     const filteredProducts = products.filter(product =>
         product.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchText.toLowerCase())
+        product.categoryId.name.toLowerCase().includes(searchText.toLowerCase())
     );
 
-    const handleStatusChange = async (checked, product) => {
+    const fetchVendorProduct = async () => {
         try {
-            // TODO: Implement API call to update product status
-            message.success(`Product ${checked ? 'activated' : 'deactivated'} successfully!`);
+            const res = await getVendorProduct(id);
+            setProducts(res)
         } catch (error) {
-            message.error('Failed to update product status');
+            message.error('Error fetching vendor product');
+        } finally {
+            setLoading(false)
         }
-    };
+    }
 
-    const handleViewDetails = (product) => {
-        navigate(`/products/${product._id}`);
-    };
+    useEffect(() => {
+        fetchVendorProduct()
+    }, [])
 
     const columns = [
         {
             title: 'Image',
             key: 'image',
             align: "center",
-            render: (_, { image }) => (
+            render: (_, { primary_image }) => (
                 <img
-                    src={image?.[0] || 'https://via.placeholder.com/50'}
+                    src={`${BASE_URL}/${primary_image}` || '?'}
                     alt="Product"
                     style={{ width: 50, height: 50, objectFit: 'cover' }}
+                    loading='lazy'
                 />
             )
         },
@@ -52,30 +59,32 @@ const VendorProducts = () => {
             title: 'Category',
             dataIndex: 'category',
             key: 'category',
-            align: "center"
+            align: "center",
+            render: (_, record) => (<>{record.categoryId.name}</>)
         },
         {
             title: 'Subcategory',
             dataIndex: 'subcategory',
             key: 'subcategory',
-            align: "center"
+            align: "center",
+            render: (_, record) => (<>{record.subCategoryId.name}</>)
         },
         {
             title: 'Price',
             dataIndex: 'price',
             key: 'price',
             align: "center",
-            render: (price) => `₹${price}`
+            render: (_, record) => (<>₹{record.sellingPrice} <del>{record.mrp}</del></>)
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
             align: "center",
-            render: (status, record) => (
+            render: (_, record) => (
                 <Switch
-                    checked={status === 'active'}
-                    onChange={(checked) => handleStatusChange(checked, record)}
+                    defaultChecked={record?.status === "active"}
+                    onChange={(checked) => updateProductStatus(record._id, checked)}
                 />
             )
         },
@@ -88,7 +97,7 @@ const VendorProducts = () => {
                     <Button
                         type="primary"
                         icon={<EyeOutlined />}
-                        onClick={() => handleViewDetails(record)}
+                        onClick={() => navigate(`/products/${shopName}-${record.name}-${record._id}`)}
                     />
                 </Space>
             )
@@ -104,7 +113,7 @@ const VendorProducts = () => {
                     items={[
                         { title: <Link to="/">Dashboard</Link> },
                         { title: <Link to="/vendor">Vendors</Link> },
-                        { title: 'Products' }
+                        { title: shopName }
                     ]}
                 />
             </div>
@@ -125,7 +134,7 @@ const VendorProducts = () => {
                 </Button>
             </div>
 
-            <Card title="Vendor Products">
+            <Card title={`${shopName} Products`}>
                 <Table
                     dataSource={filteredProducts}
                     columns={columns}

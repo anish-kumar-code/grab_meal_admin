@@ -24,14 +24,14 @@ function App() {
         <Route path='/' element={<PrivateRoute> <AdminLayout /> </PrivateRoute>}>
           <Route index element={<Dashboard />} />
           <Route path='/banner' element={<Banner />} />
-          <Route path='/food-product' element={<FoodProduct />} />
+          <Route path='/product/:serviceName' element={<FoodProduct />} />
           <Route path='/grocery-product' element={<GroceryProduct />} />
           <Route path='/category' element={<Category />} />
           <Route path='/sub-category' element={<SubCategory />} />
           <Route path='/vendor' element={<Vendor />} />
           <Route path='/vendor/:id' element={<VendorDetails />} />
-          <Route path='/vendor/:id/products' element={<VendorProducts />} />
-          <Route path='/products/:id' element={<ProductDetails />} />
+          <Route path='/vendor/:vendorSlug/products' element={<VendorProducts />} />
+          <Route path='/products/:produtSlug' element={<ProductDetails />} />
           <Route path='/user' element={<User />} />
           <Route path='/settings' element={<Settings />} />
         </Route>

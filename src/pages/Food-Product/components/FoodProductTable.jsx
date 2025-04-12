@@ -1,42 +1,56 @@
 import React from 'react'
 import dataSource from "../data.json"
-import { Avatar, Button, Space, Switch, Table } from 'antd';
+import { Avatar, Button, Space, Switch, Table, Tooltip } from 'antd';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import { EyeOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router';
+import { updateProductStatus } from '../../../services/apiProduct';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-function FoodProductTable({ searchText, onEdit, onDelete }) {
+function FoodProductTable({ searchText, data, onEdit, onDelete }) {
+
+    const navigate = useNavigate()
 
     const columns = [
         {
             title: 'Image',
             key: 'avatar',
             align: "center",
-            render: (_, { image }) => (
-                <Avatar size={40} style={{ backgroundColor: '#f56a00' }}>{image[0]}</Avatar>
+            render: (_, { primary_image }) => (
+                <img
+                    src={`${BASE_URL}/${primary_image}` || '?'}
+                    alt="Product"
+                    style={{ width: 50, height: 50, objectFit: 'cover', borderRadius: 50 }}
+                    loading='lazy'
+                />
             )
         },
         {
             title: 'Name',
-            dataIndex: 'product_name',
-            key: 'product_name',
+            dataIndex: 'name',
+            key: 'name',
             align: "center"
         },
         {
             title: 'Category',
             dataIndex: 'category',
             key: 'category',
-            align: "center"
+            align: "center",
+            render: (_, record) => (<>{record.categoryId.name}</>)
         },
         {
             title: 'Sub Category',
             dataIndex: 'subcategory',
             key: 'subcategory',
-            align: "center"
+            align: "center",
+            render: (_, record) => (<>{record.subCategoryId.name}</>)
         },
         {
             title: 'Brand',
             dataIndex: 'brand',
             key: 'brand',
-            align: "center"
+            align: "center",
+            render: (_, record) => (<>{record.brandId.name}</>)
         },
         {
             title: 'SKU',
@@ -48,22 +62,16 @@ function FoodProductTable({ searchText, onEdit, onDelete }) {
             title: 'Price',
             dataIndex: 'original_price',
             key: 'original_price',
-            align: "center"
+            align: "center",
+            render: (_, record) => (<>{`₹ ${record.sellingPrice}`} <del>{record.mrp}</del></>)
         },
-        {
-            title: 'Vendor',
-            dataIndex: 'vendor_name',
-            key: 'vendor_name',
-            align: "center"
-        },
-
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
             align: "center",
-            render: (_, { name }) => (
-                <Switch onChange={onChange} />
+            render: (_, record) => (
+                <Switch defaultChecked={record?.status === "active"} onChange={(checked) => updateProductStatus(record._id, checked)} />
             )
         },
         {
@@ -72,26 +80,24 @@ function FoodProductTable({ searchText, onEdit, onDelete }) {
             align: "right",
             render: (_, record) => (
                 <Space size="small">
-                    <Button type="primary" icon={<FaEdit />} onClick={() => onEdit(record)}>Edit</Button>
-                    <Button type="primary" danger icon={<FaTrash />} onClick={() => onDelete(record)}>Delete</Button>
+                    <Tooltip title="Details"><Button type="primary" icon={<EyeOutlined />} onClick={() => navigate(`/products/${record.name}-${record._id}`)} /></Tooltip>
+                    {/* <Tooltip title="Edit"><Button type="primary" icon={<FaEdit />} onClick={() => onEdit(record)}></Button></Tooltip>
+                    <Tooltip title="Delete"><Button type="primary" danger icon={<FaTrash />} onClick={() => onDelete(record)}></Button></Tooltip> */}
                 </Space>
             )
         }
     ];
 
-    const onChange = checked => {
-        console.log(`switch to ${checked}`);
-    };
-
     return (
         <>
             <Table
-                dataSource={dataSource.filter(item => item.product_name.toLowerCase().includes(searchText.toLowerCase()))}
+                dataSource={data.filter(item => item.name.toLowerCase().includes(searchText.toLowerCase()))}
                 columns={columns}
+                rowKey={"_id"}
                 scroll={{ x: true }}
                 bordered={false}
                 size='small'
-            />;
+            />
         </>
     )
 }

@@ -29,10 +29,6 @@ const VendorTable = ({ searchText, onDelete }) => {
         fetchVendor()
     }, [])
 
-    const handleViewDetails = (record) => {
-        navigate(`/vendor/${record._id}`);
-    };
-
     const columns = [
         {
             title: 'Avatar',
@@ -112,8 +108,8 @@ const VendorTable = ({ searchText, onDelete }) => {
             align: "right",
             render: (_, record) => (
                 <Space size="small">
-                    <Tooltip title="Products"><Button type="primary" icon={<IoStorefront />} onClick={() => navigate(`/vendor/${record._id}/products`)}></Button></Tooltip>
-                    <Tooltip title="Details"><Button type="primary" icon={<IoMdEye />} onClick={() => handleViewDetails(record)}></Button></Tooltip>
+                    <Tooltip title="Products"><Button type="primary" icon={<IoStorefront />} onClick={() => navigate(`/vendor/${record.shop_name}-${record._id}/products`)}></Button></Tooltip>
+                    <Tooltip title="Details"><Button type="primary" icon={<IoMdEye />} onClick={() => navigate(`/vendor/${record._id}`)}></Button></Tooltip>
                 </Space>
             )
         }

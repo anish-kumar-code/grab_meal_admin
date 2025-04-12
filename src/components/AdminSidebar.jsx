@@ -26,7 +26,7 @@ function AdminSidebar({ collapsed }) {
     const location = useLocation();
 
     // Get the current path without the leading slash
-    const currentPath = location.pathname.slice(1) || 'dashboard';
+    const currentPath = location.pathname.replace('/', '') || 'dashboard';
 
     const menuItems = [
         {
@@ -54,16 +54,16 @@ function AdminSidebar({ collapsed }) {
             onClick: () => navigate('/sub-category'),
         },
         {
-            key: 'food-product',
+            key: 'product/food',
             icon: <IoFastFoodOutline style={{ fontSize: "18px" }} />,
             label: 'Food Product',
-            onClick: () => navigate('/food-product'),
+            onClick: () => navigate('/product/food'),
         },
         {
-            key: 'grocery-product',
+            key: 'product/grocery',
             icon: <GrBasket style={{ fontSize: "18px" }} />,
             label: 'Grocery Product',
-            onClick: () => navigate('/grocery-product'),
+            onClick: () => navigate('/product/grocery'),
         },
         {
             type: 'divider',
@@ -85,31 +85,7 @@ function AdminSidebar({ collapsed }) {
             icon: <IoSettingsOutline style={{ fontSize: "18px" }} />,
             label: 'Settings',
             onClick: () => navigate('/settings'),
-        },
-        // {
-        //     key: 'setting',
-        //     icon: <IoSettingsOutline />,
-        //     label: 'Settings',
-        //     children: [
-        //         { key: 'profile', label: 'Profile' },
-        //         { key: 'change-password', label: 'Change Password' },
-        //         { key: 'app-setting', label: 'App Setting' },
-        //     ],
-        // },
-        // {
-        //     key: 'team',
-        //     icon: <TeamOutlined />,
-        //     label: 'Team',
-        //     children: [
-        //         { key: 'team-1', label: 'Team 1' },
-        //         { key: 'team-2', label: 'Team 2' },
-        //     ],
-        // },
-        // {
-        //     key: 'files',
-        //     icon: <FileOutlined />,
-        //     label: 'Files',
-        // },
+        }
     ]
 
     return (

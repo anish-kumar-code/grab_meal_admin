@@ -21,6 +21,15 @@ export const getVendorDetails = async (id) => {
     }
 }
 
+export const getVendorProduct = async(id)=>{
+    try {
+        const response = await axiosInstance.get(`/api/admin/vendor/${id}/product`);
+        return response.data.data;
+    } catch (error) {
+        message.error('Error fetching vendor product');
+    }
+}
+
 export const vendorBlock = async (id, status) => {
     try {
         const response = await axiosInstance.patch(`/api/admin/vendor/block/${id}`, { status });

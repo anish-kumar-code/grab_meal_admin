@@ -1,43 +1,68 @@
-import React, { useState } from 'react'
-import { Breadcrumb, Input, Button, Modal } from 'antd'
-import { Link } from 'react-router'
-import { FaPlus } from 'react-icons/fa'
-import FoodProductTable from './components/FoodProductTable'
-import AddFoodProductModel from './components/AddFoodProductModal'
-import EditFoodProductModel from './components/EditFoodProductModal'
+import React, { useEffect, useState } from 'react';
+import { Breadcrumb, Input, Button, Modal, message, Spin } from 'antd';
+import { Link, useParams } from 'react-router';
+import { FaPlus } from 'react-icons/fa';
+import FoodProductTable from './components/FoodProductTable';
+import AddFoodProductModel from './components/AddFoodProductModal';
+import EditFoodProductModel from './components/EditFoodProductModal';
+import { getAllProducts } from '../../services/apiProduct';
+import { getAllCategory, getAllSubCategory } from '../../services/apiCategory';
+import { getAllVendor } from '../../services/apiVendor';
+import { getAllBrand } from '../../services/apiBrand';
+const FOOD_ID = import.meta.env.VITE_FOOD_ID;
+const GROCERY_ID = import.meta.env.VITE_GROCERY_ID;
 
-function FoodProduct() {
+const FoodProduct = () => {
+    const [loading, setLoading] = useState(true);
+    const [products, setProducts] = useState([]);
+    const [searchText, setSearchText] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [searchText, setSearchText] = useState('');
     const [selectedProduct, setSelectedProduct] = useState(null);
+    const [categories, setCategories] = useState([])
+    const [subCategories, setSubCategories] = useState([])
+    const [brand, setBrand] = useState([])
+    const [vendor, setVendor] = useState([])
 
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
+    const { serviceName } = useParams()
+    const id = serviceName == 'food' ? FOOD_ID : GROCERY_ID
 
-    const handleOk = () => {
-        setIsModalOpen(false);
-    };
+    const fetchProduct = async (id) => {
+        setLoading(true);
+        try {
+            const productList = await getAllProducts(id);
+            setProducts(productList);
+        } catch {
+            message.error('Error fetching product list');
+        } finally {
+            setLoading(false);
+        }
+    }
 
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    };
+    useEffect(() => {
+        fetchProduct(id)
+    }, [id]);
 
-    const showEditModal = (product) => {
-        setSelectedProduct(product);
-        setIsEditModalOpen(true);
-    };
+    useEffect(() => {
+        const fetchMetaData = async () => {
+            const categoryList = await getAllCategory();
+            const subCategoryList = await getAllSubCategory();
+            const brandList = await getAllBrand()
+            const vendorList = await getAllVendor();
+            setCategories(categoryList);
+            setSubCategories(subCategoryList);
+            setBrand(brandList);
+            setVendor(vendorList)
+        }
+        fetchMetaData()
+    }, [])
 
-    const handleEditOk = () => {
-        setIsEditModalOpen(false);
-        setSelectedProduct(null);
-    };
-
-    const handleEditCancel = () => {
-        setIsEditModalOpen(false);
-        setSelectedProduct(null);
-    };
+    const transformedSubCategories = subCategories.reduce((acc, subCat) => {
+        const catId = subCat.cat_id._id;
+        if (!acc[catId]) acc[catId] = [];
+        acc[catId].push(subCat);
+        return acc;
+    }, {});
 
     const handleDelete = (product) => {
         Modal.confirm({
@@ -46,65 +71,71 @@ function FoodProduct() {
             okText: 'Yes, Delete',
             okType: 'danger',
             cancelText: 'No, Cancel',
-            onOk() {
-                // Here you would typically make an API call to delete the product
-                console.log('Deleting product:', product);
-            },
+            onOk: () => console.log('Deleting product:', product),
         });
     };
+
+    if (loading) return <Spin size="large" fullscreen />;
 
     return (
         <>
             <div className='px-4'>
                 <Breadcrumb
                     items={[
-                        {
-                            title: <Link to={'/'}>Dashboard</Link>,
-                        },
-                        {
-                            title: "Food Products",
-                        }
+                        { title: <Link to="/">Dashboard</Link> },
+                        { title: "Food Products" },
                     ]}
                 />
             </div>
-            <div className='lg:px-10 px-5 my-8 md:flex items-center gap-4 justify-between '>
+
+            <div className='lg:px-10 px-5 my-8 md:flex items-center gap-4 justify-between'>
                 <Input.Search
                     placeholder="Search by product name"
                     onChange={(e) => setSearchText(e.target.value)}
-                    style={{
-                        maxWidth: 300,
-                        borderRadius: '6px'
-                    }}
+                    style={{ maxWidth: 300, borderRadius: '6px' }}
                     size="large"
                 />
                 <Button
-                    type='primary'
+                    type="primary"
                     icon={<FaPlus />}
                     size="large"
-                    className="hover:opacity-90 transition-all duration-300"
-                    onClick={showModal}
+                    onClick={() => setIsModalOpen(true)}
                 >
-                    Add Food Product
+                    {serviceName == 'food' ? "Add Food Product" : "Add Grocery Product"}
                 </Button>
             </div>
-            <FoodProductTable searchText={searchText} onEdit={showEditModal} onDelete={handleDelete} />
 
-            {/* Add Product Modal */}
-            <AddFoodProductModel
-                isModalOpen={isModalOpen}
-                handleOk={handleOk}
-                handleCancel={handleCancel}
+            <FoodProductTable
+                searchText={searchText}
+                data={products}
+                onEdit={(product) => {
+                    setSelectedProduct(product);
+                    setIsEditModalOpen(true);
+                }}
+                onDelete={handleDelete}
             />
 
-            {/* Edit Product Modal */}
+            <AddFoodProductModel
+                isModalOpen={isModalOpen}
+                handleOk={() => { setIsModalOpen(false) }}
+                handleCancel={() => setIsModalOpen(false)}
+                data={{ categories, brand, vendor, transformedSubCategories }}
+            />
+
             <EditFoodProductModel
                 isModalOpen={isEditModalOpen}
-                handleOk={handleEditOk}
-                handleCancel={handleEditCancel}
+                handleOk={() => {
+                    setIsEditModalOpen(false);
+                    setSelectedProduct(null);
+                }}
+                handleCancel={() => {
+                    setIsEditModalOpen(false);
+                    setSelectedProduct(null);
+                }}
                 productData={selectedProduct}
             />
         </>
-    )
-}
+    );
+};
 
-export default FoodProduct
+export default FoodProduct;

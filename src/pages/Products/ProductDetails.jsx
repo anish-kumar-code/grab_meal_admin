@@ -3,9 +3,24 @@ import { useParams, useNavigate, Link } from 'react-router';
 import { Breadcrumb, Card, Spin, Image, Descriptions, Tag, Button } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { message } from 'antd';
+import { getProductDetail } from '../../services/apiProduct';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const ProductDetails = () => {
-    const { id } = useParams();
+    const { produtSlug } = useParams();
+    let slugLength = produtSlug.split("-").length;
+    let shopName;
+    let productName;
+    let id;
+    if (slugLength == 2) {
+        productName = produtSlug.split("-")[0]
+        id = produtSlug.split("-")[1]
+    } else {
+        shopName = produtSlug.split("-")[0]
+        productName = produtSlug.split("-")[1]
+        id = produtSlug.split("-")[2]
+    }
+
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     const [product, setProduct] = useState(null);
@@ -13,12 +28,11 @@ const ProductDetails = () => {
     useEffect(() => {
         const fetchProductDetails = async () => {
             try {
-                // TODO: Replace with actual API call
-                // const response = await getProductById(id);
-                // setProduct(response);
-                setLoading(false);
+                const res = await getProductDetail(id);
+                setProduct(res);
             } catch (error) {
                 message.error('Failed to load product details');
+            } finally {
                 setLoading(false);
             }
         };
@@ -32,11 +46,16 @@ const ProductDetails = () => {
         <div className="p-4">
             <div className='px-4'>
                 <Breadcrumb
-                    items={[
+                    items={slugLength == 2 ? ([
+                        { title: <Link to="/">Dashboard</Link> },
+                        { title: <Link to="/food-product">Product</Link> },
+                        { title: productName }
+                    ]) : ([
                         { title: <Link to="/">Dashboard</Link> },
                         { title: <Link to="/vendor">Vendors</Link> },
-                        { title: 'Product Details' }
-                    ]}
+                        { title: <Link onClick={() => navigate(-1)}>{shopName}</Link> },
+                        { title: productName }
+                    ])}
                 />
             </div>
 
@@ -50,21 +69,23 @@ const ProductDetails = () => {
                     Back
                 </Button>
 
-                <Card title="Product Details">
+                <Card title={`${productName} Details`}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
                             <Image
-                                src={product?.primary_image || 'https://via.placeholder.com/400'}
+                                src={`${BASE_URL}/${product?.primary_image}` || 'https://via.placeholder.com/400'}
                                 alt="Product"
                                 className="rounded-lg"
+                                loading='lazy'
                             />
                             <div className="mt-4 grid grid-cols-3 gap-4">
                                 {product?.gallery_image?.map((image, index) => (
                                     <Image
                                         key={index}
-                                        src={image}
+                                        src={`${BASE_URL}/${image}`}
                                         alt={`Gallery ${index + 1}`}
                                         className="rounded-lg"
+                                        loading='lazy'
                                     />
                                 ))}
                             </div>
@@ -86,9 +107,6 @@ const ProductDetails = () => {
                                 <Descriptions.Item label="Selling Unit">{product?.sellingUnit}</Descriptions.Item>
                                 <Descriptions.Item label="Short Description">{product?.shortDescription}</Descriptions.Item>
                                 <Descriptions.Item label="Long Description">{product?.longDescription}</Descriptions.Item>
-                                <Descriptions.Item label="Created At">
-                                    {new Date(product?.createdAt).toLocaleDateString()}
-                                </Descriptions.Item>
                             </Descriptions>
                         </div>
                     </div>
