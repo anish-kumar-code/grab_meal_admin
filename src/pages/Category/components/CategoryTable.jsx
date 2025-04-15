@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { getAllCategory, updateStatus } from '../../../services/apiCategory';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-const CategoryTable = ({ searchText,data, onEdit, onDelete }) => {
+const CategoryTable = ({ searchText, data, onEdit, onDelete }) => {
 
     const columns = [
         {
@@ -12,8 +12,8 @@ const CategoryTable = ({ searchText,data, onEdit, onDelete }) => {
             key: 'avatar',
             align: "center",
             render: (_, { image }) => (
-                <Avatar size={60} style={{ backgroundColor: '#fff' , boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'}}>
-                    {image ? <img src={`${BASE_URL}/${image}`}/> : "?"}
+                <Avatar size={60} style={{ backgroundColor: '#fff', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)' }}>
+                    {image ? <img src={`${BASE_URL}/${image}`} /> : "?"}
                 </Avatar>
             )
         },
@@ -24,12 +24,25 @@ const CategoryTable = ({ searchText,data, onEdit, onDelete }) => {
             align: "center"
         },
         {
+            title: 'Type',
+            dataIndex: 'type',
+            key: 'name',
+            align: "center"
+        },
+        {
+            title: 'Service',
+            dataIndex: 'serviceId',
+            key: 'name',
+            align: "center",
+            render: (_, record) => (<>{record.serviceId.name}</>)
+        },
+        {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
             align: "center",
             render: (_, record) => (
-                <Switch defaultChecked={record?.status === "active"} onChange={(checked)=> updateStatus(record._id,checked)} />
+                <Switch defaultChecked={record?.status === "active"} onChange={(checked) => updateStatus(record._id, checked)} />
             )
         },
         {

@@ -26,6 +26,12 @@ const SubCategoryTable = ({ searchText, data, onEdit, onDelete }) => {
             render: (_, record) => record.cat_id?.name || "N/A"
         },
         {
+            title: 'Type',
+            key: 'cat_id',
+            align: "center",
+            render: (_, record) => record.cat_id?.type || "N/A"
+        },
+        {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
@@ -47,14 +53,15 @@ const SubCategoryTable = ({ searchText, data, onEdit, onDelete }) => {
         }
     ];
 
-    const onChange = checked => {
-        console.log(`switch to ${checked}`);
-    };
-
-    const filtredData = data.filter((item) => item.name.toLowerCase().includes(searchText.toLowerCase()))
+    const filteredData = data.filter((item) => {
+        const nameMatch = item.name?.toLowerCase().includes(searchText.toLowerCase());
+        const categoryNameMatch = item.cat_id?.name?.toLowerCase().includes(searchText.toLowerCase());
+        const typeMatch = item.cat_id?.type?.toLowerCase().includes(searchText.toLowerCase());
+        return nameMatch || categoryNameMatch || typeMatch;
+    });
 
     return <Table
-        dataSource={filtredData}
+        dataSource={filteredData}
         columns={columns}
         rowKey={"_id"}
         scroll={{ x: true }}

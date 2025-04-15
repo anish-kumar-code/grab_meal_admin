@@ -10,11 +10,16 @@ import { addProduct } from '../../../services/apiProduct';
 const { Option } = Select;
 
 function AddFoodProductModal({ isModalOpen, data, handleOk, handleCancel }) {
-    const { categories, brand, vendor, transformedSubCategories } = data;
+    const { categories, brand } = data;
     const [form] = Form.useForm();
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [primaryImageList, setPrimaryImageList] = useState([]);
     const [galleryImageList, setGalleryImageList] = useState([]);
+
+    const [selectedService, setSelectedService] = useState(null);
+    const [selectedType, setSelectedType] = useState(null);
+    const [filteredCategories, setFilteredCategories] = useState([]);
+    const [filteredSubCategories, setFilteredSubCategories] = useState([]);
 
     useEffect(() => {
         if (isModalOpen) {
@@ -44,9 +49,10 @@ function AddFoodProductModal({ isModalOpen, data, handleOk, handleCancel }) {
             formData.append("discount", values.discount || 0);
             formData.append("unitOfMeasurement", values.unitOfMeasurement);
             formData.append("sellingUnit", values.sellingUnit);
-            formData.append("brandId", values.brandId);
+            // formData.append("brandId", values.brandId);
             formData.append("serviceId", values.serviceId);
-            formData.append("vendorId", values.vendor);
+            formData.append("type", values.type); 
+            // formData.append("vendorId", values.vendor);
             formData.append("categoryId", values.category);
             formData.append("subCategoryId", values.subCategory);
             formData.append("shortDescription", values.shortDescription);
@@ -133,7 +139,7 @@ function AddFoodProductModal({ isModalOpen, data, handleOk, handleCancel }) {
                     ))}
                 </Row>
 
-                <Row gutter={16}>
+                {/* <Row gutter={16}>
                     <Col span={12}>
                         <Form.Item name="brandId" label="Brand" rules={[{ required: true }]}>
                             <Select placeholder="Select brand">{brand.map(b => (
@@ -149,32 +155,69 @@ function AddFoodProductModal({ isModalOpen, data, handleOk, handleCancel }) {
                             </Select>
                         </Form.Item>
                     </Col>
-                </Row>
+                </Row> */}
 
                 <Row gutter={16}>
-                    <Col span={8}>
-                        <Form.Item name="vendor" label="Vendor" rules={[{ required: true }]}>
-                            <Select placeholder="Select vendor">{vendor.map(v => (
-                                <Option key={v._id} value={v._id}>{v.shop_name}</Option>
-                            ))}</Select>
+                    <Col span={6}>
+                        <Form.Item name="serviceId" label="Service Type" rules={[{ required: true }]}>
+                            <Select
+                                placeholder="Select service"
+                                onChange={value => {
+                                    setSelectedService(value);
+                                    setSelectedType(null);
+                                    setFilteredCategories([]);
+                                    form.setFieldsValue({ type: undefined, category: undefined, subCategory: undefined });
+                                }}
+                            >
+                                <Option value="67ecc79120a93fc0b92a8b19">Food</Option>
+                                <Option value="67ecc79a20a93fc0b92a8b1b">Grocery</Option>
+                            </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={8}>
+                    <Col span={6}>
+                        <Form.Item name="type" label="Type" rules={[{ required: true }]}>
+                            <Select
+                                placeholder="Select type"
+                                onChange={value => {
+                                    setSelectedType(value);
+                                    const categoryList = categories.filter(cat =>
+                                        cat.serviceId?._id === selectedService && cat.type === value
+                                    );
+                                    setFilteredCategories(categoryList);
+                                    setFilteredSubCategories([]);
+                                    form.setFieldsValue({ category: undefined, subCategory: undefined });
+                                }}
+                                disabled={!selectedService}
+                            >
+                                <Option value="veg">Veg</Option>
+                                <Option value="nonveg">Non-Veg</Option>
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={6}>
                         <Form.Item name="category" label="Category" rules={[{ required: true }]}>
-                            <Select placeholder="Select category" onChange={value => {
-                                setSelectedCategory(value);
-                                form.setFieldsValue({ subCategory: undefined });
-                            }}>
-                                {categories.map(c => (
-                                    <Option key={c._id} value={c._id}>{c.name}</Option>
+                            <Select
+                                placeholder="Select category"
+                                onChange={value => {
+                                    setSelectedCategory(value);
+                                    const subCats = data.subCategories.filter(sub => sub.cat_id._id === value);
+                                    setFilteredSubCategories(subCats);
+                                    form.setFieldsValue({ subCategory: undefined });
+                                }}
+                                disabled={!selectedType}
+                            >
+                                {filteredCategories.map(cat => (
+                                    <Option key={cat._id} value={cat._id}>
+                                        {cat.name} --- {cat.type}
+                                    </Option>
                                 ))}
                             </Select>
                         </Form.Item>
                     </Col>
-                    <Col span={8}>
+                    <Col span={6}>
                         <Form.Item name="subCategory" label="Sub-Category" rules={[{ required: true }]}>
                             <Select placeholder="Select sub-category" disabled={!selectedCategory}>
-                                {transformedSubCategories[selectedCategory]?.map(sub => (
+                                {filteredSubCategories.map(sub => (
                                     <Option key={sub._id} value={sub._id}>{sub.name}</Option>
                                 ))}
                             </Select>

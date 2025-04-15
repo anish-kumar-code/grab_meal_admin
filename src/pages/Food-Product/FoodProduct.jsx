@@ -119,7 +119,7 @@ const FoodProduct = () => {
                 isModalOpen={isModalOpen}
                 handleOk={() => { setIsModalOpen(false) }}
                 handleCancel={() => setIsModalOpen(false)}
-                data={{ categories, brand, vendor, transformedSubCategories }}
+                data={{ categories, brand, vendor, transformedSubCategories, subCategories}}
             />
 
             <EditFoodProductModel
@@ -133,6 +133,7 @@ const FoodProduct = () => {
                     setSelectedProduct(null);
                 }}
                 productData={selectedProduct}
+                data={{ categories, brand, vendor, transformedSubCategories, subCategories}}
             />
         </>
     );

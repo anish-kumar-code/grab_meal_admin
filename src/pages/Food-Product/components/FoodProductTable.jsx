@@ -46,12 +46,19 @@ function FoodProductTable({ searchText, data, onEdit, onDelete }) {
             render: (_, record) => (<>{record.subCategoryId.name}</>)
         },
         {
-            title: 'Brand',
-            dataIndex: 'brand',
-            key: 'brand',
+            title: 'Type',
+            dataIndex: 'type',
+            key: 'type',
             align: "center",
-            render: (_, record) => (<>{record.brandId.name}</>)
+            render: (_, record) => (<>{record.type}</>)
         },
+        // {
+        //     title: 'Brand',
+        //     dataIndex: 'brand',
+        //     key: 'brand',
+        //     align: "center",
+        //     render: (_, record) => (<>{record.brandId.name}</>)
+        // },
         {
             title: 'SKU',
             dataIndex: 'sku',
@@ -81,8 +88,8 @@ function FoodProductTable({ searchText, data, onEdit, onDelete }) {
             render: (_, record) => (
                 <Space size="small">
                     <Tooltip title="Details"><Button type="primary" icon={<EyeOutlined />} onClick={() => navigate(`/products/${record.name}-${record._id}`)} /></Tooltip>
-                    {/* <Tooltip title="Edit"><Button type="primary" icon={<FaEdit />} onClick={() => onEdit(record)}></Button></Tooltip>
-                    <Tooltip title="Delete"><Button type="primary" danger icon={<FaTrash />} onClick={() => onDelete(record)}></Button></Tooltip> */}
+                    {/* <Tooltip title="Edit"><Button type="primary" icon={<FaEdit />} onClick={() => onEdit(record)}></Button></Tooltip> */}
+                    {/* <Tooltip title="Delete"><Button type="primary" danger icon={<FaTrash />} onClick={() => onDelete(record)}></Button></Tooltip> */}
                 </Space>
             )
         }

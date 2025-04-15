@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Modal, Form, Input, message, Upload } from 'antd';
+import { Modal, Form, Input, message, Upload, Row, Col, Select } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { addCategory, getAllCategory } from '../../../services/apiCategory';
 import dataURLtoFile from '../../../utils/fileConverter';
@@ -50,6 +50,8 @@ function AddCategoryModel({ isModalOpen, handleOk, handleCancel }) {
         const file = dataURLtoFile(imageUrl, "category.png");
         const formData = new FormData();
         formData.append("name", values.categoryName);
+        formData.append("type", values.type);
+        formData.append("serviceId", values.serviceId);
         formData.append("image", file);
         try {
             setLoading(true);
@@ -88,6 +90,25 @@ function AddCategoryModel({ isModalOpen, handleOk, handleCancel }) {
                 >
                     <Input placeholder='Enter New Category Name' />
                 </Form.Item>
+
+                <Row gutter={16}>
+                    <Col span={12}>
+                        <Form.Item name="type" label="Veg or Non veg" rules={[{ required: true }]}>
+                            <Select placeholder="Select type">
+                                <Option value="veg">Veg</Option>
+                                <Option value="nonveg">Non Veg</Option>
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item name="serviceId" label="Food or Grocery" rules={[{ required: true }]}>
+                            <Select placeholder="Select service">
+                                <Option value="67ecc79120a93fc0b92a8b19">Food</Option>
+                                <Option value="67ecc79a20a93fc0b92a8b1b">Grocery</Option>
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                </Row>
 
                 <Form.Item label="Category Image" name="image" >
                     <Upload

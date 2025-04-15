@@ -109,7 +109,7 @@ function AddSubCategoryModel({ isModalOpen, handleOk, handleCancel }) {
                             <Option key={cat._id} value={cat._id} label={cat.name}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                     <Avatar size="small" src={`${BASE_URL}/${cat.image}`} />
-                                    <span>{cat.name}</span>
+                                    <span>{cat.name} --- {cat.type} - {cat.serviceId.name} </span>
                                 </div>
                             </Option>
                         ))}
