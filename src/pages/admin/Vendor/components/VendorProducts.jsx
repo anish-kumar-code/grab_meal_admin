@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Table, Card, Button, Spin, message, Input, Breadcrumb, Switch, Space } from 'antd';
 import { useParams, useNavigate, Link } from 'react-router';
 import { ArrowLeftOutlined, EyeOutlined } from '@ant-design/icons';
-import { getVendorProduct } from '../../../services/apiVendor';
-import { updateProductStatus } from '../../../services/apiProduct';
+import { getVendorProduct } from '@services/apiVendor';
+import { updateProductStatus } from '@services/apiProduct';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const VendorProducts = () => {

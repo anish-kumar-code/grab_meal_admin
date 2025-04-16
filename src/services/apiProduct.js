@@ -1,5 +1,5 @@
 import { message } from "antd";
-import axiosInstance from "../utils/axiosInstance"
+import axiosInstance from "@utils/axiosInstance"
 
 export const addProduct = async (formData) => {
     const response = await axiosInstance.post("/api/admin/product/create", formData, {

@@ -1,6 +1,6 @@
 import { Avatar, Button, Space, Switch, Table } from 'antd'
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import { updateStatus } from '../../../services/apiCategory';
+import { updateStatus } from '../../../../services/apiCategory';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const SubCategoryTable = ({ searchText, data, onEdit, onDelete }) => {

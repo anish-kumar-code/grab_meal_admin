@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, message } from 'antd';
-import { useAuth } from '../../context/AuthContext';
-import axiosInstance from '../../utils/axiosInstance';
+import { useAuth } from '../../../context/AuthContext';
+import axiosInstance from '../../../utils/axiosInstance';
 import { useNavigate } from 'react-router';
 
 function Login() {

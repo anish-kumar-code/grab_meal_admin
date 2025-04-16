@@ -1,5 +1,5 @@
 import { message } from "antd";
-import axiosInstance from "../utils/axiosInstance"
+import axiosInstance from "@utils/axiosInstance"
 
 export const getAllBrand = async () => {
     try {

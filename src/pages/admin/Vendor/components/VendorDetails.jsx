@@ -1,29 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Card, Descriptions, Table, Tag, Button, Spin } from "antd";
 import { useParams, useNavigate } from "react-router";
-import dataSource from '../data.json';
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import axiosInstance from "../../../utils/axiosInstance";
-import { getVendorDetails } from "../../../services/apiVendor";
+import { getVendorDetails } from "@services/apiVendor";
 
 const VendorDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [vendorData, setVendorData] = useState(null);
     const [loading, setLoading] = useState(true);
-
-    // useEffect(() => {
-    //     const vendor = dataSource.find(item => item.vendor._id === id);
-    //     if (vendor) {
-    //         setVendorData(vendor);
-    //     }
-    // }, [id]);
-
-    // if (!vendorData) {
-    //     return <div>Loading...</div>;
-    // }
-
-    // getVendorDetails(id)
 
     useEffect(() => {
         const fetchVendorDetails = async () => {
@@ -44,30 +29,6 @@ const VendorDetails = () => {
         fetchVendorDetails()
     }, [id])
 
-    console.log(vendorData)
-
-    // useEffect(() => {
-    //     const fetchVendor = async () => {
-    //         try {
-    //             const response = await axiosInstance.get("/api/admin/vendor/list");
-    //             const vendors = response.data.data.vendors;
-    //             const matchedVendor = vendors.find(v => v._id === id);
-    //             if (matchedVendor) {
-    //                 setVendorData({
-    //                     vendor: matchedVendor,
-    //                     vendorAccountDetails: matchedVendor.bank_details || {},
-    //                     shopTime: matchedVendor.shopTime || { schedule: [] }
-    //                 });
-    //             }
-    //         } catch (error) {
-    //             console.error("Error fetching vendor details:", error);
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     };
-
-    //     fetchVendor();
-    // }, [id]);
     if (loading || !vendorData) return <Spin size="large" fullscreen />;
     const { vendor, vendorAccountDetails, shopTime } = vendorData;
 

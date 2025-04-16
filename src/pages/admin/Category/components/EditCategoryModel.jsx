@@ -1,13 +1,25 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Modal, Form, Input, message, Upload, Row, Col, Select } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { addCategory, getAllCategory } from '../../../services/apiCategory';
-import dataURLtoFile from '../../../utils/fileConverter';
+import { updateCategory } from '../../../../services/apiCategory';
+import dataURLtoFile from '../../../../utils/fileConverter';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-function AddCategoryModel({ isModalOpen, handleOk, handleCancel }) {
+function EditCategoryModel({ isModalOpen, handleOk, handleCancel, categoryData }) {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [imageUrl, setImageUrl] = useState();
+
+    useEffect(() => {
+        if (categoryData) {
+            form.setFieldsValue({
+                categoryName: categoryData.name,
+                type: categoryData.type,
+                serviceId: categoryData.serviceId._id
+            });
+            setImageUrl(categoryData.image);
+        }
+    }, [categoryData, form]);
 
     const beforeUpload = (file) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
@@ -30,6 +42,7 @@ function AddCategoryModel({ isModalOpen, handleOk, handleCancel }) {
                 setImageUrl(reader.result);
             };
             reader.readAsDataURL(info.file);
+            form.setFieldsValue({ image: info.file });
         }
     };
 
@@ -41,28 +54,24 @@ function AddCategoryModel({ isModalOpen, handleOk, handleCancel }) {
     );
 
     const handleSubmit = async (values) => {
-        // console.log(values)
 
-        if (!imageUrl) {
-            return message.error("Please upload a category image.");
+        const formData = new FormData();
+        formData.append("name", values.categoryName)
+        formData.append("type", values.type)
+        formData.append("serviceId", values.serviceId) 
+        if (imageUrl && imageUrl !== categoryData.image && imageUrl.startsWith("data:")) {
+            const file = dataURLtoFile(imageUrl, "category.png");
+            formData.append("image", file);
         }
 
-        const file = dataURLtoFile(imageUrl, "category.png");
-        const formData = new FormData();
-        formData.append("name", values.categoryName);
-        formData.append("type", values.type);
-        formData.append("serviceId", values.serviceId);
-        formData.append("image", file);
+        setLoading(true);
         try {
-            setLoading(true);
-            await addCategory(formData);
-            message.success('Category added successfully!');
+            await updateCategory(categoryData._id, formData);
+            message.success('Category updated successfully!');
             form.resetFields();
-            setImageUrl(null);
             handleOk();
-            getAllCategory()
         } catch (error) {
-            message.error("Failed to add category.");
+            message.error('Error updating category');
         } finally {
             setLoading(false);
         }
@@ -70,12 +79,12 @@ function AddCategoryModel({ isModalOpen, handleOk, handleCancel }) {
 
     return (
         <Modal
-            title="Add Category"
+            title="Edit Category"
             open={isModalOpen}
             onOk={form.submit}
             onCancel={handleCancel}
             confirmLoading={loading}
-            okText="Add Category"
+            okText="Update Category"
         >
             <Form
                 form={form}
@@ -88,7 +97,7 @@ function AddCategoryModel({ isModalOpen, handleOk, handleCancel }) {
                     name="categoryName"
                     rules={[{ required: true, message: 'Please enter category name!' }]}
                 >
-                    <Input placeholder='Enter New Category Name' />
+                    <Input placeholder='Enter Category Name' />
                 </Form.Item>
 
                 <Row gutter={16}>
@@ -110,7 +119,7 @@ function AddCategoryModel({ isModalOpen, handleOk, handleCancel }) {
                     </Col>
                 </Row>
 
-                <Form.Item label="Category Image" name="image" >
+                <Form.Item label="Category Image" name="image" valuePropName='file'>
                     <Upload
                         name="image"
                         listType="picture-card"
@@ -121,7 +130,7 @@ function AddCategoryModel({ isModalOpen, handleOk, handleCancel }) {
                     >
                         {imageUrl ? (
                             <img
-                                src={imageUrl}
+                                src={imageUrl.startsWith('data:') ? imageUrl : `${BASE_URL}/${imageUrl}`}
                                 alt="Preview"
                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                             />
@@ -135,4 +144,4 @@ function AddCategoryModel({ isModalOpen, handleOk, handleCancel }) {
     );
 }
 
-export default AddCategoryModel
+export default EditCategoryModel

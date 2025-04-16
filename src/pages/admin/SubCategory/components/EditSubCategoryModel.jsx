@@ -1,25 +1,38 @@
 import React, { useState, useEffect } from 'react'
-import { Modal, Form, Input, message, Upload, Row, Col, Select } from 'antd';
+import { Modal, Form, Input, message, Upload, Select, Avatar } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { updateCategory } from '../../../services/apiCategory';
-import dataURLtoFile from '../../../utils/fileConverter';
+import dataURLtoFile from '@utils/fileConverter';
+import { getAllCategory, updateCategory } from '@services/apiCategory';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
+const { Option } = Select;
 
-function EditCategoryModel({ isModalOpen, handleOk, handleCancel, categoryData }) {
+function EditSubCategoryModel({ isModalOpen, handleOk, handleCancel, categoryData }) {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [imageUrl, setImageUrl] = useState();
+    const [categories, setCategories] = useState([]);
 
     useEffect(() => {
         if (categoryData) {
             form.setFieldsValue({
-                categoryName: categoryData.name,
-                type: categoryData.type,
-                serviceId: categoryData.serviceId._id
+                categoryName: categoryData.cat_id._id,
+                subcategoryName: categoryData.name
             });
             setImageUrl(categoryData.image);
         }
     }, [categoryData, form]);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const res = await getAllCategory();
+                setCategories(res)
+            } catch (error) {
+                message.error("Failed to load categories.");
+            }
+        }
+        fetchCategories()
+    }, [])
 
     const beforeUpload = (file) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
@@ -54,24 +67,20 @@ function EditCategoryModel({ isModalOpen, handleOk, handleCancel, categoryData }
     );
 
     const handleSubmit = async (values) => {
-
         const formData = new FormData();
-        formData.append("name", values.categoryName)
-        formData.append("type", values.type)
-        formData.append("serviceId", values.serviceId) 
+        formData.append("name", values.subcategoryName)
+        formData.append("cat_id", values.categoryName)
         if (imageUrl && imageUrl !== categoryData.image && imageUrl.startsWith("data:")) {
             const file = dataURLtoFile(imageUrl, "category.png");
             formData.append("image", file);
         }
-
         setLoading(true);
         try {
             await updateCategory(categoryData._id, formData);
-            message.success('Category updated successfully!');
             form.resetFields();
             handleOk();
         } catch (error) {
-            message.error('Error updating category');
+            message.error('Failed to update sub category');
         } finally {
             setLoading(false);
         }
@@ -79,12 +88,12 @@ function EditCategoryModel({ isModalOpen, handleOk, handleCancel, categoryData }
 
     return (
         <Modal
-            title="Edit Category"
+            title="Edit Sub Category"
             open={isModalOpen}
             onOk={form.submit}
             onCancel={handleCancel}
             confirmLoading={loading}
-            okText="Update Category"
+            okText="Update Sub Category"
         >
             <Form
                 form={form}
@@ -95,31 +104,35 @@ function EditCategoryModel({ isModalOpen, handleOk, handleCancel, categoryData }
                 <Form.Item
                     label="Category Name"
                     name="categoryName"
-                    rules={[{ required: true, message: 'Please enter category name!' }]}
+                    rules={[{ required: true, message: 'Please select a category!' }]}
                 >
-                    <Input placeholder='Enter Category Name' />
+                    <Select
+                        showSearch
+                        placeholder="Select a category"
+                        optionFilterProp="label"
+                        filterOption={(input, option) =>
+                            option?.label?.toLowerCase().includes(input.toLowerCase())
+                        }
+                    >
+                        {categories.map(cat => (
+                            <Option key={cat._id} value={cat._id} label={cat.name}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <Avatar size="small" src={`${BASE_URL}/${cat.image}`} />
+                                    <span>{cat.name} --- {cat.type} - {cat.serviceId.name} </span>
+                                </div>
+                            </Option>
+                        ))}
+                    </Select>
+                </Form.Item>
+                <Form.Item
+                    label="Sub Category Name"
+                    name="subcategoryName"
+                    rules={[{ required: true, message: 'Please enter sub category name!' }]}
+                >
+                    <Input placeholder='Enter Sub Category Name' />
                 </Form.Item>
 
-                <Row gutter={16}>
-                    <Col span={12}>
-                        <Form.Item name="type" label="Veg or Non veg" rules={[{ required: true }]}>
-                            <Select placeholder="Select type">
-                                <Option value="veg">Veg</Option>
-                                <Option value="nonveg">Non Veg</Option>
-                            </Select>
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item name="serviceId" label="Food or Grocery" rules={[{ required: true }]}>
-                            <Select placeholder="Select service">
-                                <Option value="67ecc79120a93fc0b92a8b19">Food</Option>
-                                <Option value="67ecc79a20a93fc0b92a8b1b">Grocery</Option>
-                            </Select>
-                        </Form.Item>
-                    </Col>
-                </Row>
-
-                <Form.Item label="Category Image" name="image" valuePropName='file'>
+                <Form.Item label="Sub Category Image" name="image">
                     <Upload
                         name="image"
                         listType="picture-card"
@@ -144,4 +157,4 @@ function EditCategoryModel({ isModalOpen, handleOk, handleCancel, categoryData }
     );
 }
 
-export default EditCategoryModel
+export default EditSubCategoryModel

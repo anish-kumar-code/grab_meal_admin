@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Breadcrumb, Button, Input, message, Modal, Spin } from 'antd';
 import { FaPlus } from 'react-icons/fa';
 import { Link } from 'react-router';
-import SubCategoryTable from '../SubCategory/components/SubCategoryTable';
-import AddSubCategoryModel from '../SubCategory/components/AddSubCategoryModel';
-import EditSubCategoryModel from '../SubCategory/components/EditSubCategoryModel';
-import { deleteCategory, getAllSubCategory } from '../../services/apiCategory';
+import SubCategoryTable from './components/SubCategoryTable';
+import AddSubCategoryModel from './components/AddSubCategoryModel';
+import EditSubCategoryModel from './components/EditSubCategoryModel';
+import { deleteCategory, getAllSubCategory } from '../../../services/apiCategory';
 
 function SubCategory() {
     const [subcategories, setSubcategories] = useState([]);

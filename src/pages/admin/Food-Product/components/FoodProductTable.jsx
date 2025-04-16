@@ -4,7 +4,7 @@ import { Avatar, Button, Space, Switch, Table, Tooltip } from 'antd';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { EyeOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router';
-import { updateProductStatus } from '../../../services/apiProduct';
+import { updateProductStatus } from '@services/apiProduct';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 function FoodProductTable({ searchText, data, onEdit, onDelete }) {

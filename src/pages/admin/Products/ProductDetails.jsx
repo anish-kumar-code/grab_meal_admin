@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router';
 import { Breadcrumb, Card, Spin, Image, Descriptions, Tag, Button } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { message } from 'antd';
-import { getProductDetail } from '../../services/apiProduct';
+import { getProductDetail } from '@services/apiProduct';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const ProductDetails = () => {

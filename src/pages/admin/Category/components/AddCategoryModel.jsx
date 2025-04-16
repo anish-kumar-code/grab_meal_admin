@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import { Modal, Form, Input, message, Upload, Select, Avatar } from 'antd';
+import React, { useState } from 'react'
+import { Modal, Form, Input, message, Upload, Row, Col, Select } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { addCategory, getAllCategory, getAllSubCategory } from '../../../services/apiCategory';
-import dataURLtoFile from '../../../utils/fileConverter';
-const { Option } = Select;
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { addCategory, getAllCategory } from '@services/apiCategory';
+import dataURLtoFile from '@utils/fileConverter';
 
-function AddSubCategoryModel({ isModalOpen, handleOk, handleCancel }) {
+function AddCategoryModel({ isModalOpen, handleOk, handleCancel }) {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [imageUrl, setImageUrl] = useState();
-    const [categories, setCategories] = useState([]);
 
     const beforeUpload = (file) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
@@ -43,35 +40,29 @@ function AddSubCategoryModel({ isModalOpen, handleOk, handleCancel }) {
         </div>
     );
 
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const res = await getAllCategory();
-                setCategories(res)
-            } catch (error) {
-                message.error("Failed to load categories.");
-            }
-        }
-        fetchCategories()
-    }, [])
-
     const handleSubmit = async (values) => {
+        // console.log(values)
 
-        if (!imageUrl) { return message.error("Please upload a category image."); }
+        if (!imageUrl) {
+            return message.error("Please upload a category image.");
+        }
+
         const file = dataURLtoFile(imageUrl, "category.png");
-        const formData = new FormData()
-        formData.append("name", values.subcategoryName);
-        formData.append("cat_id", values.categoryName)
+        const formData = new FormData();
+        formData.append("name", values.categoryName);
+        formData.append("type", values.type);
+        formData.append("serviceId", values.serviceId);
         formData.append("image", file);
         try {
             setLoading(true);
             await addCategory(formData);
-            message.success('Subcategory added successfully!');
+            message.success('Category added successfully!');
             form.resetFields();
             setImageUrl(null);
             handleOk();
+            getAllCategory()
         } catch (error) {
-            message.error('Failed to add sub category');
+            message.error("Failed to add category.");
         } finally {
             setLoading(false);
         }
@@ -79,12 +70,12 @@ function AddSubCategoryModel({ isModalOpen, handleOk, handleCancel }) {
 
     return (
         <Modal
-            title="Add Sub Category"
+            title="Add Category"
             open={isModalOpen}
             onOk={form.submit}
             onCancel={handleCancel}
             confirmLoading={loading}
-            okText="Add Sub Category"
+            okText="Add Category"
         >
             <Form
                 form={form}
@@ -95,35 +86,31 @@ function AddSubCategoryModel({ isModalOpen, handleOk, handleCancel }) {
                 <Form.Item
                     label="Category Name"
                     name="categoryName"
-                    rules={[{ required: true, message: 'Please select a category!' }]}
+                    rules={[{ required: true, message: 'Please enter category name!' }]}
                 >
-                    <Select
-                        showSearch
-                        placeholder="Select a category"
-                        optionFilterProp="label"
-                        filterOption={(input, option) =>
-                            option?.label?.toLowerCase().includes(input.toLowerCase())
-                        }
-                    >
-                        {categories.map(cat => (
-                            <Option key={cat._id} value={cat._id} label={cat.name}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                    <Avatar size="small" src={`${BASE_URL}/${cat.image}`} />
-                                    <span>{cat.name} --- {cat.type} - {cat.serviceId.name} </span>
-                                </div>
-                            </Option>
-                        ))}
-                    </Select>
-                </Form.Item>
-                <Form.Item
-                    label="Sub Category Name"
-                    name="subcategoryName"
-                    rules={[{ required: true, message: 'Please enter sub category name!' }]}
-                >
-                    <Input placeholder='Enter Sub Category Name' />
+                    <Input placeholder='Enter New Category Name' />
                 </Form.Item>
 
-                <Form.Item label="Sub Category Image" name="image">
+                <Row gutter={16}>
+                    <Col span={12}>
+                        <Form.Item name="type" label="Veg or Non veg" rules={[{ required: true }]}>
+                            <Select placeholder="Select type">
+                                <Option value="veg">Veg</Option>
+                                <Option value="nonveg">Non Veg</Option>
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item name="serviceId" label="Food or Grocery" rules={[{ required: true }]}>
+                            <Select placeholder="Select service">
+                                <Option value="67ecc79120a93fc0b92a8b19">Food</Option>
+                                <Option value="67ecc79a20a93fc0b92a8b1b">Grocery</Option>
+                            </Select>
+                        </Form.Item>
+                    </Col>
+                </Row>
+
+                <Form.Item label="Category Image" name="image" >
                     <Upload
                         name="image"
                         listType="picture-card"
@@ -148,4 +135,4 @@ function AddSubCategoryModel({ isModalOpen, handleOk, handleCancel }) {
     );
 }
 
-export default AddSubCategoryModel
+export default AddCategoryModel

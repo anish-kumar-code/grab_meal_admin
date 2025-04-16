@@ -5,10 +5,10 @@ import { FaPlus } from 'react-icons/fa';
 import FoodProductTable from './components/FoodProductTable';
 import AddFoodProductModel from './components/AddFoodProductModal';
 import EditFoodProductModel from './components/EditFoodProductModal';
-import { getAllProducts } from '../../services/apiProduct';
-import { getAllCategory, getAllSubCategory } from '../../services/apiCategory';
-import { getAllVendor } from '../../services/apiVendor';
-import { getAllBrand } from '../../services/apiBrand';
+import { getAllProducts } from '@services/apiProduct';
+import { getAllCategory, getAllSubCategory } from '@services/apiCategory';
+import { getAllVendor } from '@services/apiVendor';
+import { getAllBrand } from '@services/apiBrand';
 const FOOD_ID = import.meta.env.VITE_FOOD_ID;
 const GROCERY_ID = import.meta.env.VITE_GROCERY_ID;
 

@@ -5,7 +5,7 @@ import {
     message
 } from 'antd';
 import { UploadOutlined, PlusOutlined } from '@ant-design/icons';
-import { addProduct } from '../../../services/apiProduct';
+import { addProduct } from '@services/apiProduct';
 
 const { Option } = Select;
 

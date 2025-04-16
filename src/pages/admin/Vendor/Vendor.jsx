@@ -2,22 +2,54 @@ import { Breadcrumb, Button, Input, Modal } from 'antd'
 import React, { useState } from 'react'
 import { FaPlus } from 'react-icons/fa'
 import { Link } from 'react-router'
-import UserTable from '../User/components/UserTable'
+import VendorTable from './components/VendorTable'
 import AddSubCategoryModel from '../SubCategory/components/AddSubCategoryModel'
 import EditSubCategoryModel from '../SubCategory/components/EditSubCategoryModel'
 
-function User() {
-    const [searchText, setSearchText] = useState('');
+function Vendor() {
 
-    const handleDelete = (user) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [searchText, setSearchText] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState(null);
+
+    // const showModal = () => {
+    //     setIsModalOpen(true);
+    // };
+
+    // const handleOk = () => {
+    //     setIsModalOpen(false);
+    // };
+
+    // const handleCancel = () => {
+    //     setIsModalOpen(false);
+    // };
+
+    // const showEditModal = (category) => {
+    //     setSelectedCategory(category);
+    //     setIsEditModalOpen(true);
+    // };
+
+    // const handleEditOk = () => {
+    //     setIsEditModalOpen(false);
+    //     setSelectedCategory(null);
+    // };
+
+    // const handleEditCancel = () => {
+    //     setIsEditModalOpen(false);
+    //     setSelectedCategory(null);
+    // };
+
+    const handleDelete = (vendor) => {
+        console.log(vendor)
         Modal.confirm({
-            title: 'Delete User',
-            content: `Are you sure you want to delete "${user.name}"?`,
+            title: 'Delete Vendor',
+            content: `Are you sure you want to delete "${vendor.vendorname}"?`,
             okText: 'Delete',
             okType: 'danger',
             cancelText: 'Cancel',
             onOk: () => {
-                console.log('Deleting category:', user);
+                console.log('Deleting category:', vendor);
             }
         });
     };
@@ -31,7 +63,7 @@ function User() {
                             title: <Link to={'/'}>Dashboard</Link>,
                         },
                         {
-                            title: "users",
+                            title: "vendors",
                         }
                     ]}
                 />
@@ -56,7 +88,7 @@ function User() {
                     Add Sub Category
                 </Button> */}
             </div>
-            <UserTable searchText={searchText} onDelete={handleDelete} />
+            <VendorTable searchText={searchText} onDelete={handleDelete} />
 
             {/* modal */}
             {/* <AddSubCategoryModel
@@ -76,4 +108,4 @@ function User() {
     )
 }
 
-export default User
+export default Vendor

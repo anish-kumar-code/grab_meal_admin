@@ -3,7 +3,7 @@ import { FaTrash } from 'react-icons/fa';
 import { IoMdEye } from 'react-icons/io';
 import { useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
-import { getAllVendor, vendorApprove, vendorBlock } from '../../../services/apiVendor';
+import { getAllVendor, vendorApprove, vendorBlock } from '@services/apiVendor';
 import { FaUserTie } from 'react-icons/fa6';
 import { Tooltip } from 'antd';
 import { IoStorefront } from 'react-icons/io5';

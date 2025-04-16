@@ -2,54 +2,22 @@ import { Breadcrumb, Button, Input, Modal } from 'antd'
 import React, { useState } from 'react'
 import { FaPlus } from 'react-icons/fa'
 import { Link } from 'react-router'
-import VendorTable from '../Vendor/components/VendorTable'
+import UserTable from './components/UserTable'
 import AddSubCategoryModel from '../SubCategory/components/AddSubCategoryModel'
 import EditSubCategoryModel from '../SubCategory/components/EditSubCategoryModel'
 
-function Vendor() {
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+function User() {
     const [searchText, setSearchText] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState(null);
 
-    // const showModal = () => {
-    //     setIsModalOpen(true);
-    // };
-
-    // const handleOk = () => {
-    //     setIsModalOpen(false);
-    // };
-
-    // const handleCancel = () => {
-    //     setIsModalOpen(false);
-    // };
-
-    // const showEditModal = (category) => {
-    //     setSelectedCategory(category);
-    //     setIsEditModalOpen(true);
-    // };
-
-    // const handleEditOk = () => {
-    //     setIsEditModalOpen(false);
-    //     setSelectedCategory(null);
-    // };
-
-    // const handleEditCancel = () => {
-    //     setIsEditModalOpen(false);
-    //     setSelectedCategory(null);
-    // };
-
-    const handleDelete = (vendor) => {
-        console.log(vendor)
+    const handleDelete = (user) => {
         Modal.confirm({
-            title: 'Delete Vendor',
-            content: `Are you sure you want to delete "${vendor.vendorname}"?`,
+            title: 'Delete User',
+            content: `Are you sure you want to delete "${user.name}"?`,
             okText: 'Delete',
             okType: 'danger',
             cancelText: 'Cancel',
             onOk: () => {
-                console.log('Deleting category:', vendor);
+                console.log('Deleting category:', user);
             }
         });
     };
@@ -63,7 +31,7 @@ function Vendor() {
                             title: <Link to={'/'}>Dashboard</Link>,
                         },
                         {
-                            title: "vendors",
+                            title: "users",
                         }
                     ]}
                 />
@@ -88,7 +56,7 @@ function Vendor() {
                     Add Sub Category
                 </Button> */}
             </div>
-            <VendorTable searchText={searchText} onDelete={handleDelete} />
+            <UserTable searchText={searchText} onDelete={handleDelete} />
 
             {/* modal */}
             {/* <AddSubCategoryModel
@@ -108,4 +76,4 @@ function Vendor() {
     )
 }
 
-export default Vendor
+export default User

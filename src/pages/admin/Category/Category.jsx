@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 import CategoryTable from './components/CategoryTable';
 import AddCategoryModel from './components/AddCategoryModel';
 import EditCategoryModel from './components/EditCategoryModel';
-import { deleteCategory, getAllCategory } from '../../services/apiCategory';
+import { deleteCategory, getAllCategory } from '@services/apiCategory';
 
 function Category() {
     const [categories, setCategories] = useState([]);

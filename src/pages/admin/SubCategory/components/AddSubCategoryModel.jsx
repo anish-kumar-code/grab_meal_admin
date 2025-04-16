@@ -1,38 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Modal, Form, Input, message, Upload, Select, Avatar } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import dataURLtoFile from '../../../utils/fileConverter';
-import { getAllCategory, updateCategory } from '../../../services/apiCategory';
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { addCategory, getAllCategory, getAllSubCategory } from '@services/apiCategory';
+import dataURLtoFile from '@utils/fileConverter';
 const { Option } = Select;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-function EditSubCategoryModel({ isModalOpen, handleOk, handleCancel, categoryData }) {
+function AddSubCategoryModel({ isModalOpen, handleOk, handleCancel }) {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [imageUrl, setImageUrl] = useState();
     const [categories, setCategories] = useState([]);
-
-    useEffect(() => {
-        if (categoryData) {
-            form.setFieldsValue({
-                categoryName: categoryData.cat_id._id,
-                subcategoryName: categoryData.name
-            });
-            setImageUrl(categoryData.image);
-        }
-    }, [categoryData, form]);
-
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const res = await getAllCategory();
-                setCategories(res)
-            } catch (error) {
-                message.error("Failed to load categories.");
-            }
-        }
-        fetchCategories()
-    }, [])
 
     const beforeUpload = (file) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
@@ -55,7 +33,6 @@ function EditSubCategoryModel({ isModalOpen, handleOk, handleCancel, categoryDat
                 setImageUrl(reader.result);
             };
             reader.readAsDataURL(info.file);
-            form.setFieldsValue({ image: info.file });
         }
     };
 
@@ -66,21 +43,35 @@ function EditSubCategoryModel({ isModalOpen, handleOk, handleCancel, categoryDat
         </div>
     );
 
-    const handleSubmit = async (values) => {
-        const formData = new FormData();
-        formData.append("name", values.subcategoryName)
-        formData.append("cat_id", values.categoryName)
-        if (imageUrl && imageUrl !== categoryData.image && imageUrl.startsWith("data:")) {
-            const file = dataURLtoFile(imageUrl, "category.png");
-            formData.append("image", file);
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const res = await getAllCategory();
+                setCategories(res)
+            } catch (error) {
+                message.error("Failed to load categories.");
+            }
         }
-        setLoading(true);
+        fetchCategories()
+    }, [])
+
+    const handleSubmit = async (values) => {
+
+        if (!imageUrl) { return message.error("Please upload a category image."); }
+        const file = dataURLtoFile(imageUrl, "category.png");
+        const formData = new FormData()
+        formData.append("name", values.subcategoryName);
+        formData.append("cat_id", values.categoryName)
+        formData.append("image", file);
         try {
-            await updateCategory(categoryData._id, formData);
+            setLoading(true);
+            await addCategory(formData);
+            message.success('Subcategory added successfully!');
             form.resetFields();
+            setImageUrl(null);
             handleOk();
         } catch (error) {
-            message.error('Failed to update sub category');
+            message.error('Failed to add sub category');
         } finally {
             setLoading(false);
         }
@@ -88,12 +79,12 @@ function EditSubCategoryModel({ isModalOpen, handleOk, handleCancel, categoryDat
 
     return (
         <Modal
-            title="Edit Sub Category"
+            title="Add Sub Category"
             open={isModalOpen}
             onOk={form.submit}
             onCancel={handleCancel}
             confirmLoading={loading}
-            okText="Update Sub Category"
+            okText="Add Sub Category"
         >
             <Form
                 form={form}
@@ -143,7 +134,7 @@ function EditSubCategoryModel({ isModalOpen, handleOk, handleCancel, categoryDat
                     >
                         {imageUrl ? (
                             <img
-                                src={imageUrl.startsWith('data:') ? imageUrl : `${BASE_URL}/${imageUrl}`}
+                                src={imageUrl}
                                 alt="Preview"
                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                             />
@@ -157,4 +148,4 @@ function EditSubCategoryModel({ isModalOpen, handleOk, handleCancel, categoryDat
     );
 }
 
-export default EditSubCategoryModel
+export default AddSubCategoryModel
