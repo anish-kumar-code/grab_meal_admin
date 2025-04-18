@@ -27,6 +27,9 @@ import VendorLogin from './pages/vendor/auth/Login'
 import VendorRegister from './pages/vendor/auth/Register'
 import VendorDashboard from './pages/vendor/Dashboard/Dashboard'
 import Shop from './pages/vendor/Shop/Shop'
+import VendorSettings from './pages/vendor/Settings/Settings'
+import VendorProfile from './pages/vendor/Profile/Profile'
+import VendorAddShop from './pages/vendor/Shop/components/AddShop'
 
 function App() {
   return (
@@ -52,10 +55,14 @@ function App() {
         {/* vendor route */}
         <Route path='/vendor/login' element={<VendorLogin />} />
         <Route path='/vendor/register' element={<VendorRegister />} />
+        <Route path='/vendor/addShop' element={<VendorAddShop />} />
         <Route path='/vendor' element={<VendorPrivateRoute><VendorLayout /></VendorPrivateRoute>}>
           <Route index element={<VendorDashboard />} />
           <Route path='shop' element={<Shop />} />
+          <Route path='profile' element={<VendorProfile />} />
+          <Route path='settings' element={<VendorSettings />} />
         </Route>
+        <Route path='*' element={<LandingPage />} />
       </Routes>
     </>
   )

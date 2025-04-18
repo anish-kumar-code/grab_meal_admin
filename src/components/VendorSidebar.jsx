@@ -5,6 +5,8 @@ import { LuLayoutDashboard } from "react-icons/lu";
 import { FaRegUser, FaRegFileAlt, FaStore } from 'react-icons/fa';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { MdLogout } from 'react-icons/md';
+import { useAuth } from '../context/AuthContext';
+
 
 const { Sider } = Layout;
 
@@ -23,6 +25,7 @@ const siderStyle = {
 function VendorSidebar({ collapsed }) {
     const navigate = useNavigate();
     const location = useLocation();
+    const { vendorLogout } = useAuth();
     const currentPath = location.pathname.replace('/vendor/', '') || 'dashboard';
 
     const menuItems = [
@@ -44,12 +47,12 @@ function VendorSidebar({ collapsed }) {
             label: 'Profile',
             onClick: () => navigate('/vendor/profile'),
         },
-        {
-            key: 'documents',
-            icon: <FaRegFileAlt style={{ fontSize: "18px" }} />,
-            label: 'Documents',
-            onClick: () => navigate('/vendor/documents'),
-        },
+        // {
+        //     key: 'documents',
+        //     icon: <FaRegFileAlt style={{ fontSize: "18px" }} />,
+        //     label: 'Documents',
+        //     onClick: () => navigate('/vendor/documents'),
+        // },
         {
             type: 'divider',
         },
@@ -64,8 +67,8 @@ function VendorSidebar({ collapsed }) {
             icon: <MdLogout style={{ fontSize: "18px" }} />,
             label: 'Logout',
             onClick: () => {
-                // logout logic here
-                navigate('/login');
+                vendorLogout()
+                navigate('/vendor/login');
             },
         },
     ];
@@ -77,7 +80,7 @@ function VendorSidebar({ collapsed }) {
             collapsible
             collapsed={collapsed}
             style={siderStyle}
-            // className="bg-[#001529]"
+        // className="bg-[#001529]"
         >
             <div className="flex items-center gap-3 my-3 mx-2 p-3 bg-zinc-600 rounded-md">
                 <Avatar
@@ -97,7 +100,7 @@ function VendorSidebar({ collapsed }) {
                     );
                     if (clickedItem?.onClick) clickedItem.onClick();
                 }}
-                style={{ fontSize: "15px"}}
+                style={{ fontSize: "15px" }}
             />
         </Sider>
     );

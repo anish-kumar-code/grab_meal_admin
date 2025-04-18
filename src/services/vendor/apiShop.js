@@ -30,6 +30,7 @@ export const shopClose = async (id, status) => {
         message.success('Shop status change');
         return response;
     } catch (error) {
+        console.log(error)
         message.error('Something went wrong');
     }
 }

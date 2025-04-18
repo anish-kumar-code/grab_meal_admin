@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, message } from 'antd';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useAuth } from '../../../context/AuthContext';
 import axiosInstance from '../../../utils/axiosInstance';
 
@@ -83,6 +83,7 @@ function VendorLogin() {
                                 </Button>
                             </Form.Item>
                         </Form>
+                        <p className="text-sm text-gray-500 mb-8 my-4">Register as <Link to={'/vendor/register'} className='text-blue-500'>New Vendor</Link>!</p>
                     </div>
                 </div>
             </div>

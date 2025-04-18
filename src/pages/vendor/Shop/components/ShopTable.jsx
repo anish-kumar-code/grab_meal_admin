@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Tag, Space, Button, Card, Spin, message, Switch, Tooltip } from 'antd';
-import { getAllShop } from '@services/vendor/apiShop';
+import React from 'react';
+import { Table, Space, Button, Card, Switch, Tooltip } from 'antd';
 import { shopClose, shopStatus } from '../../../../services/vendor/apiShop';
-import { IoStorefront } from 'react-icons/io5';
 import { IoMdEye } from 'react-icons/io';
 import { useNavigate } from 'react-router';
 import { FaEdit } from 'react-icons/fa';
 
-function ShopTable({shops, handleEdit}) {
+function ShopTable({ shops, handleEdit }) {
     const navigate = useNavigate()
 
     const columns = [
@@ -67,7 +65,7 @@ function ShopTable({shops, handleEdit}) {
                 <Space size="small">
                     {/* <Tooltip title="Products"><Button type="primary" icon={<IoStorefront />} onClick={() => navigate(`admin/vendor/${record.shop_name}-${record._id}/products`)}></Button></Tooltip> */}
                     <Button type="primary" icon={<FaEdit />} onClick={() => handleEdit(record)}>Edit</Button>
-                    <Tooltip title="Details"><Button type="primary" icon={<IoMdEye />} onClick={() => navigate(`/admin/vendor/${record._id}`)}></Button></Tooltip>
+                    {/* <Tooltip title="Details"><Button type="primary" icon={<IoMdEye />} onClick={() => navigate(`/admin/vendor/${record._id}`)}></Button></Tooltip> */}
                 </Space>
             )
         }

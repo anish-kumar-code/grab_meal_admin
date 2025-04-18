@@ -6,6 +6,7 @@ import Document from './components/Document';
 import Agreement from './components/Agreement';
 import { registerVendor } from '../../../services/vendor/apiAuth';
 import { getFee, getTermAndServices } from '../../../services/vendor/apiCms';
+import { Link } from 'react-router';
 
 const { Step } = Steps;
 
@@ -102,8 +103,8 @@ const Register = () => {
                 </div>
 
                 {/* Right Side Form */}
-                <div className="flex w-full lg:w-1/2 justify-center items-center px-4 sm:px-6 py-12">
-                    <div className="w-full max-w-3xl bg-white shadow-2xl rounded-2xl p-8 sm:p-10">
+                <div className="flex w-full lg:w-1/2 justify-center items-center px-4 sm:px-6 py-4">
+                    <div className="w-full max-w-3xl bg-white shadow-2xl rounded-2xl p-2 sm:p-10">
                         <h2 className="text-3xl font-bold text-center text-green-600 mb-2">Vendor Registration</h2>
                         <p className="text-sm text-gray-500 text-center mb-8">Go Rabbit Business partner!</p>
                         {/* <p className="text-sm text-gray-500 text-center mb-8">Become a seller with Go Rabbit!</p> */}
@@ -144,6 +145,7 @@ const Register = () => {
                                 )}
                             </div>
                         </Form>
+                        <p className="text-sm text-gray-500 mb-8 my-4">Already registred <Link to={'/vendor/login'} className='text-blue-500'>Login</Link>!</p>
                     </div>
                 </div>
             </div>
