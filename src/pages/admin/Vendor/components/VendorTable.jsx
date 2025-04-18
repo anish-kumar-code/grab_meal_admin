@@ -20,6 +20,7 @@ const VendorTable = ({ searchText, onDelete }) => {
             try {
                 const res = await getAllVendor()
                 setDataSource(res)
+                console.log(dataSource)
             } catch (error) {
                 console.log(error)
             } finally {
@@ -34,35 +35,35 @@ const VendorTable = ({ searchText, onDelete }) => {
             title: 'Avatar',
             key: 'avatar',
             align: "center",
-            render: (_, { profileImage, owner_name }) => (
+            render: (_, { profileImg, name }) => (
                 <Avatar size={40} style={{ backgroundColor: '#f56a00' }}>
                     {/* {image || '?'} */}
-                    {profileImage ? <img src={`${BASE_URL}/${profileImage}`} alt={owner_name} /> : <FaUserTie />}
+                    {profileImg ? <img src={`${BASE_URL}/${profileImg}`} alt={name} /> : <FaUserTie />}
                 </Avatar>
             )
         },
         {
             title: 'Owner Name',
-            dataIndex: 'owner_name',
-            key: 'owner_name',
+            dataIndex: 'name',
+            key: 'name',
             align: "center"
         },
-        {
-            title: 'Shop Name',
-            dataIndex: 'shop_name',
-            key: 'shop_name',
-            align: "center"
-        },
+        // {
+        //     title: 'Shop Name',
+        //     dataIndex: 'shop_name',
+        //     key: 'shop_name',
+        //     align: "center"
+        // },
         {
             title: 'User Name',
-            dataIndex: 'user_id',
-            key: 'user_id',
+            dataIndex: 'userId',
+            key: 'userId',
             align: "center"
         },
         {
             title: 'Mobile no',
-            dataIndex: 'mobile_no',
-            key: 'mobile_no',
+            dataIndex: 'mobile',
+            key: 'mobile',
             align: "center"
         },
         {
@@ -71,19 +72,19 @@ const VendorTable = ({ searchText, onDelete }) => {
             key: 'email',
             align: "center"
         },
-        {
-            title: 'Services',
-            dataIndex: 'service_id',
-            key: 'service_id',
-            align: "center",
-            render: (services) => (
-                <Space size={[0, 8]} wrap>
-                    {services.map((service, index) => (
-                        <Tag color="blue" key={index}>{service.name}</Tag>
-                    ))}
-                </Space>
-            )
-        },
+        // {
+        //     title: 'Services',
+        //     dataIndex: 'service_id',
+        //     key: 'service_id',
+        //     align: "center",
+        //     render: (services) => (
+        //         <Space size={[0, 8]} wrap>
+        //             {services.map((service, index) => (
+        //                 <Tag color="blue" key={index}>{service.name}</Tag>
+        //             ))}
+        //         </Space>
+        //     )
+        // },
         {
             title: 'Approve',
             dataIndex: 'isApproved',
@@ -108,8 +109,8 @@ const VendorTable = ({ searchText, onDelete }) => {
             align: "right",
             render: (_, record) => (
                 <Space size="small">
-                    <Tooltip title="Products"><Button type="primary" icon={<IoStorefront />} onClick={() => navigate(`/vendor/${record.shop_name}-${record._id}/products`)}></Button></Tooltip>
-                    <Tooltip title="Details"><Button type="primary" icon={<IoMdEye />} onClick={() => navigate(`/vendor/${record._id}`)}></Button></Tooltip>
+                    <Tooltip title="Products"><Button type="primary" icon={<IoStorefront />} onClick={() => navigate(`admin/vendor/${record.shop_name}-${record._id}/products`)}></Button></Tooltip>
+                    <Tooltip title="Details"><Button type="primary" icon={<IoMdEye />} onClick={() => navigate(`/admin/vendor/${record._id}`)}></Button></Tooltip>
                 </Space>
             )
         }
@@ -120,7 +121,7 @@ const VendorTable = ({ searchText, onDelete }) => {
     if (loading) return <Spin size="large" fullscreen />
 
     return <Table
-        dataSource={filtredData}
+        dataSource={dataSource}
         columns={columns}
         rowKey="_id"
         scroll={{ x: true }}

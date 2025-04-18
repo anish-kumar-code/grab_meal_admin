@@ -33,37 +33,37 @@ function AdminSidebar({ collapsed }) {
             key: 'dashboard',
             icon: <LuLayoutDashboard style={{ fontSize: "18px" }} />,
             label: 'Dashboard',
-            onClick: () => navigate('/'),
+            onClick: () => navigate('/admin'),
         },
         {
             key: 'banner',
             icon: <IoImagesOutline style={{ fontSize: "18px" }} />,
             label: 'Banner',
-            onClick: () => navigate('/banner'),
+            onClick: () => navigate('/admin/banner'),
         },
         {
             key: 'category',
             icon: <TbCategory2 style={{ fontSize: "18px" }} />,
             label: 'Category',
-            onClick: () => navigate('/category'),
+            onClick: () => navigate('/admin/category'),
         },
         {
             key: 'sub-category',
             icon: <MdOutlineCategory style={{ fontSize: "18px" }} />,
             label: 'Sub Category',
-            onClick: () => navigate('/sub-category'),
+            onClick: () => navigate('/admin/sub-category'),
         },
         {
             key: 'product/food',
             icon: <IoFastFoodOutline style={{ fontSize: "18px" }} />,
             label: 'Food Product',
-            onClick: () => navigate('/product/food'),
+            onClick: () => navigate('/admin/product/food'),
         },
         {
             key: 'product/grocery',
             icon: <GrBasket style={{ fontSize: "18px" }} />,
             label: 'Grocery Product',
-            onClick: () => navigate('/product/grocery'),
+            onClick: () => navigate('/admin/product/grocery'),
         },
         {
             type: 'divider',
@@ -72,19 +72,19 @@ function AdminSidebar({ collapsed }) {
             key: 'vendor',
             icon: <LuUsers style={{ fontSize: "18px" }} />,
             label: 'Vendor',
-            onClick: () => navigate('/vendor'),
+            onClick: () => navigate('/admin/vendor'),
         },
         {
             key: 'user',
             icon: <FaRegUser style={{ fontSize: "18px" }} />,
             label: 'User',
-            onClick: () => navigate('/user'),
+            onClick: () => navigate('/admin/user'),
         },
         {
             key: 'settings',
             icon: <IoSettingsOutline style={{ fontSize: "18px" }} />,
             label: 'Settings',
-            onClick: () => navigate('/settings'),
+            onClick: () => navigate('/admin/settings'),
         }
     ]
 

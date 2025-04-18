@@ -8,10 +8,25 @@ const axiosInstance = axios.create({
 
 // Add auth token automatically if exists
 axiosInstance.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+    const adminToken = localStorage.getItem('adminToken');
+    const vendorToken = localStorage.getItem('vendorToken');
+    
+
+    if (config.url.includes("/api/admin")) {
+        console.log("Admin Token on axios :".adminToken)
+        if (adminToken) {
+            config.headers.Authorization = `Bearer ${adminToken}`;
+        }
+    } else if (config.url.includes("api/vendor")) {
+        if (vendorToken) {
+            config.headers.Authorization = `Bearer ${vendorToken}`;
+        }
     }
+
+    // const token = localStorage.getItem("token");
+    // if (token) {
+    //     config.headers.Authorization = `Bearer ${token}`;
+    // }
     return config;
 });
 

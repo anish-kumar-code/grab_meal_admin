@@ -58,7 +58,7 @@ const CategoryTable = ({ searchText, data, onEdit, onDelete }) => {
         }
     ];
 
-    const filtredData = data.filter((item) => item.name.toLowerCase().includes(searchText.toLowerCase()))
+    const filtredData = data.filter((item) => item?.name?.toLowerCase().includes(searchText.toLowerCase()))
 
     return <Table
         // dataSource={dataSource.filter(item => item.categoryName.toLowerCase().includes(searchText.toLowerCase()))}

@@ -1,26 +1,26 @@
-import React, { useState, useEffect } from 'react'
-import { Avatar, Button, Layout, Dropdown, Space, Typography } from 'antd'
-import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from '@ant-design/icons'
-import { FaAngleRight, FaArrowRightToBracket } from 'react-icons/fa6'
-import { IoSettingsSharp } from 'react-icons/io5'
-import { CgProfile } from 'react-icons/cg'
-import { useNavigate } from 'react-router'
-import { useAuth } from '../context/AuthContext'
+import React, { useState, useEffect } from 'react';
+import { Avatar, Button, Layout, Dropdown, Space, Typography } from 'antd';
+import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from '@ant-design/icons';
+import { FaAngleRight, FaArrowRightToBracket } from 'react-icons/fa6';
+import { IoSettingsSharp } from 'react-icons/io5';
+import { CgProfile } from 'react-icons/cg';
+import { useNavigate } from 'react-router';
+import { useAuth } from '../context/AuthContext';
 
-const { Header } = Layout
-const { Text } = Typography
+const { Header } = Layout;
+const { Text } = Typography;
 
-function AdminHeader({ collapsed, setCollapsed, background }) {
-    const navigate = useNavigate()
-    const [currentTime, setCurrentTime] = useState(new Date())
-    const { adminLogout } = useAuth(); 
+function VendorHeader({ collapsed, setCollapsed, background }) {
+    const navigate = useNavigate();
+    const [currentTime, setCurrentTime] = useState(new Date());
+    const { vendorLogout } = useAuth();
 
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrentTime(new Date())
-        }, 1000)
-        return () => clearInterval(timer)
-    }, [])
+            setCurrentTime(new Date());
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []);
 
     const items = [
         {
@@ -36,7 +36,7 @@ function AdminHeader({ collapsed, setCollapsed, background }) {
         {
             key: '2',
             label: (
-                <div onClick={() => navigate('/settings')} className="hover:bg-gray-100 px-4 py-2 cursor-pointer">
+                <div onClick={() => navigate('/vendor/profile')} className="hover:bg-gray-100 px-4 py-2 cursor-pointer">
                     <Space className="flex items-center gap-2">
                         <CgProfile className="text-base" />
                         <Text>Profile</Text>
@@ -47,7 +47,7 @@ function AdminHeader({ collapsed, setCollapsed, background }) {
         {
             key: '3',
             label: (
-                <div onClick={() => navigate('/settings')} className="hover:bg-gray-100 px-4 py-2 cursor-pointer">
+                <div onClick={() => navigate('/vendor/settings')} className="hover:bg-gray-100 px-4 py-2 cursor-pointer">
                     <Space className="flex items-center gap-2">
                         <IoSettingsSharp className="text-base" />
                         <Text>Settings</Text>
@@ -58,25 +58,24 @@ function AdminHeader({ collapsed, setCollapsed, background }) {
         {
             key: '4',
             label: (
-                <div onClick={() => {
-                    adminLogout();
-                    navigate("/login");
-                }} className="hover:bg-gray-100 px-4 py-2 cursor-pointer">
+                <div
+                    onClick={() => {
+                        vendorLogout();
+                        navigate('/vendor/login');
+                    }}
+                    className="hover:bg-gray-100 px-4 py-2 cursor-pointer"
+                >
                     <Space className="flex items-center gap-2">
                         <FaArrowRightToBracket className="text-base" />
-                        <Text >Logout</Text>
+                        <Text>Logout</Text>
                     </Space>
                 </div>
-            ),
-            onClick: () => {/* Add your logout logic here */ }
-        },
-    ]
+            )
+        }
+    ];
 
     return (
-        <Header
-            className="admin-header bg-white shadow-md px-6 h-16 z-10"
-            style={{ background }}
-        >
+        <Header className="bg-white shadow-md px-6 h-16 z-10" style={{ background }}>
             <div className="flex justify-between items-center h-full">
                 <div className="flex items-center gap-4">
                     <Button
@@ -84,9 +83,9 @@ function AdminHeader({ collapsed, setCollapsed, background }) {
                         shape="circle"
                         icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                         onClick={() => setCollapsed(!collapsed)}
-                        className="text-xl w-12 h-12 text-blue-600 flex items-center justify-center"
+                        className="text-xl w-12 h-12 text-green-600 flex items-center justify-center"
                     />
-                    <Text strong className="text-xl text-blue-600 hidden sm:block">Go Rabbit</Text>
+                    <Text strong className="text-xl text-green-600 hidden sm:block">Go Rabbit</Text>
                 </div>
 
                 <div className="flex items-center gap-6">
@@ -98,7 +97,7 @@ function AdminHeader({ collapsed, setCollapsed, background }) {
                                 day: 'numeric'
                             })}
                         </Text>
-                        <Text className="text-base text-blue-600 font-semibold">
+                        <Text className="text-base text-green-600 font-semibold">
                             {currentTime.toLocaleTimeString('en-US', {
                                 hour: '2-digit',
                                 minute: '2-digit'
@@ -110,17 +109,17 @@ function AdminHeader({ collapsed, setCollapsed, background }) {
                         <div className="flex items-center gap-2 p-2 px-3 rounded-lg cursor-pointer transition-colors hover:bg-gray-100">
                             <Avatar
                                 size={36}
-                                className="bg-blue-600 flex items-center justify-center"
+                                className="bg-green-600 flex items-center justify-center"
                                 icon={<UserOutlined className="text-lg" />}
                             />
-                            <Text strong className="text-blue-600 font-semibold">Admin</Text>
-                            <FaAngleRight className="text-blue-600 text-sm" />
+                            <Text strong className="text-green-600 font-semibold">Vendor</Text>
+                            <FaAngleRight className="text-green-600 text-sm" />
                         </div>
                     </Dropdown>
                 </div>
             </div>
         </Header>
-    )
+    );
 }
 
-export default AdminHeader
+export default VendorHeader;

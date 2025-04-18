@@ -3,6 +3,7 @@ import { Card, Descriptions, Table, Tag, Button, Spin } from "antd";
 import { useParams, useNavigate } from "react-router";
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { getVendorDetails } from "@services/apiVendor";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const VendorDetails = () => {
     const { id } = useParams();
@@ -63,7 +64,7 @@ const VendorDetails = () => {
             <Button
                 type="text"
                 icon={<ArrowLeftOutlined />}
-                onClick={() => navigate('/vendor')}
+                onClick={() => navigate(-1)}
                 className="mb-4"
             >
                 Back to Vendors
@@ -72,20 +73,21 @@ const VendorDetails = () => {
                 {/* Vendor Info */}
                 <Card title="Vendor Information" bordered>
                     <Descriptions column={2}>
-                        <Descriptions.Item label="Owner Name">{vendor.owner_name}</Descriptions.Item>
-                        <Descriptions.Item label="Shop Name">{vendor.shop_name}</Descriptions.Item>
-                        <Descriptions.Item label="Mobile No">{vendor.mobile_no}</Descriptions.Item>
+                        <Descriptions.Item label="Owner Name">{vendor.name}</Descriptions.Item>
+                        {/* <Descriptions.Item label="Shop Name">{vendor.shop_name}</Descriptions.Item> */}
+                        <Descriptions.Item label="User Id">{vendor.userId}</Descriptions.Item>
+                        <Descriptions.Item label="Mobile No">{vendor.mobile}</Descriptions.Item>
                         <Descriptions.Item label="Alternate Phone">{vendor.alternate_phoneNo || "N/A"}</Descriptions.Item>
                         <Descriptions.Item label="Email">{vendor.email}</Descriptions.Item>
                         {/* <Descriptions.Item label="Type">{vendor.type?.toUpperCase()}</Descriptions.Item> */}
-                        <Descriptions.Item label="GST No">{vendor.gst_no || "N/A"}</Descriptions.Item>
-                        <Descriptions.Item label="PAN No">{vendor.pan_no || "N/A"}</Descriptions.Item>
-                        <Descriptions.Item label="Services">
+                        {/* <Descriptions.Item label="GST No">{vendor.gstNo || "N/A"}</Descriptions.Item> */}
+                        {/* <Descriptions.Item label="PAN No">{vendor.panNo || "N/A"}</Descriptions.Item> */}
+                        {/* <Descriptions.Item label="Services">
                             {vendor.service_id.map((s) => (
                                 <Tag color="blue" key={s.name}>{s.name}</Tag>
                             ))}
-                        </Descriptions.Item>
-                        <Descriptions.Item label="Food License No">{vendor.food_license_no || "N/A"}</Descriptions.Item>
+                        </Descriptions.Item> */}
+                        {/* <Descriptions.Item label="Food License No">{vendor.foodLicense || "N/A"}</Descriptions.Item> */}
                         <Descriptions.Item label="Address">{vendor.address || "N/A"}</Descriptions.Item>
                         <Descriptions.Item label="Approved">
                             <Tag color={vendor.isApproved ? "green" : "red"}>
@@ -101,29 +103,72 @@ const VendorDetails = () => {
                 </Card>
 
                 {/* Account Info */}
-                {
-                    vendorData.vendorAccountDetails != null && (<Card title="Bank Account Details" bordered>
-                        <Descriptions column={2}>
-                            <Descriptions.Item label="Bank Name">{vendorAccountDetails.bankName || "N/A"}</Descriptions.Item>
-                            <Descriptions.Item label="Account No">{vendorAccountDetails.accountNo || "N/A"}</Descriptions.Item>
-                            <Descriptions.Item label="IFSC">{vendorAccountDetails.ifsc || "N/A"}</Descriptions.Item>
-                            <Descriptions.Item label="Branch">{vendorAccountDetails.branchName || "N/A"}</Descriptions.Item>
-                        </Descriptions>
-                    </Card>)
-                }
+                <Card title="Bank Account Details" bordered>
+                    <Descriptions column={2}>
+                        <Descriptions.Item label="Bank Name">{vendor.bankName || "N/A"}</Descriptions.Item>
+                        <Descriptions.Item label="Account No">{vendor.accountNo || "N/A"}</Descriptions.Item>
+                        <Descriptions.Item label="IFSC">{vendor.ifsc || "N/A"}</Descriptions.Item>
+                        <Descriptions.Item label="Branch">{vendor.branchName || "N/A"}</Descriptions.Item>
+                        <Descriptions.Item label="Passbook/Statement/Cheque">
+                            {vendor.passbook ? (
+                                <a href={`${BASE_URL}/${vendor.passbook}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                                    View Image
+                                </a>
+                            ) : (
+                                "N/A"
+                            )}
+                        </Descriptions.Item>
+                    </Descriptions>
+                </Card>
 
-                <Card title="Shop Details" bordered>
+                <Card title="Document Details" bordered>
+                    <Descriptions column={2}>
+                        <Descriptions.Item label="Business PAN Number">{vendor.panNo || "N/A"}</Descriptions.Item>
+                        <Descriptions.Item label="GST Number">{vendor.gstNo || "N/A"}</Descriptions.Item>
+                        <Descriptions.Item label="Food License Number">{vendor.foodLicense || "N/A"}</Descriptions.Item>
+                        {/* <Descriptions.Item label="Branch">{vendor.branchName || "N/A"}</Descriptions.Item> */}
+                        <Descriptions.Item label="Business PAN Image">
+                            {vendor.panImage ? (
+                                <a href={`${BASE_URL}/${vendor.panImage}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                                    View Image
+                                </a>
+                            ) : (
+                                "N/A"
+                            )}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="GST Image">
+                            {vendor.gstImage ? (
+                                <a href={`${BASE_URL}/${vendor.gstImage}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                                    View Image
+                                </a>
+                            ) : (
+                                "N/A"
+                            )}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Food License Image">
+                            {vendor.foodImage ? (
+                                <a href={`${BASE_URL}/${vendor.foodImage}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                                    View Image
+                                </a>
+                            ) : (
+                                "N/A"
+                            )}
+                        </Descriptions.Item>
+                    </Descriptions>
+                </Card>
+
+                {/* <Card title="Shop Details" bordered>
                     <Descriptions column={2}>
                         <Descriptions.Item label="Like">{vendor.like}</Descriptions.Item>
                         <Descriptions.Item label="Followers">{vendor.followers}</Descriptions.Item>
                         <Descriptions.Item label="Products">{vendor.productCount}</Descriptions.Item>
-                        {/* <Descriptions.Item label="Branch">{vendorAccountDetails.branchName}</Descriptions.Item> */}
+                        <Descriptions.Item label="Branch">{vendorAccountDetails.branchName}</Descriptions.Item>
                     </Descriptions>
-                </Card>
+                </Card> */}
 
 
                 {/* Shop Timing */}
-                {
+                {/* {
                     vendorData.shopTime != null && (<Card title="Shop Schedule" bordered>
                         <Table
                             dataSource={shopTime.schedule}
@@ -132,7 +177,7 @@ const VendorDetails = () => {
                             pagination={false}
                         />
                     </Card>)
-                }
+                } */}
             </div>
         </div>
     );
