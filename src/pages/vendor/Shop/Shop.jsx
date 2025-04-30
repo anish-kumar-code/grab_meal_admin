@@ -15,7 +15,7 @@ function Shop() {
 
     const showModal = () => setIsModalOpen(true);
     const handleCancel = () => setIsModalOpen(false);
-    const handleOk = () => { setIsModalOpen(false) };
+    const handleOk = () => { setIsModalOpen(false); fetchAllShop(); };
     const handleEdit = (shop) => {
         setEditingShop(shop);
         setIsEditModalOpen(true);
@@ -56,13 +56,14 @@ function Shop() {
                     </Button>
                 </div>
 
-                <ShopTable shops={shops} handleEdit={handleEdit}/>
+                <ShopTable shops={shops} handleEdit={handleEdit} />
 
                 <AddShopModel
                     isModalOpen={isModalOpen}
                     handleCancel={handleCancel}
                     handleOk={handleOk}
                 />
+                
                 <EditShopModel
                     isModalOpen={isEditModalOpen}
                     handleOk={() => {

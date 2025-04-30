@@ -1,8 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FiMail, FiPhone, FiFileText, FiShield, FiArrowUpRight } from 'react-icons/fi';
+import { CiLocationOn } from "react-icons/ci";
+import { Link } from 'react-router';
+const MotionLink = motion.create(Link);
 
-function Footer() {
+function Footer({ data }) {
     return (
         <footer className="bg-gradient-to-b from-green-900 to-green-950 text-white pt-16 pb-8">
             <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -16,6 +19,7 @@ function Footer() {
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-green-400 rounded-lg flex items-center justify-center">
                                 <span className="text-2xl font-bold text-green-900">GR</span>
+                                <img src="" alt="" />
                             </div>
                             <h2 className="text-2xl font-bold text-green-300">Go Rabbit</h2>
                         </div>
@@ -69,20 +73,27 @@ function Footer() {
                         </h3>
                         <ul className="space-y-3">
                             {[
-                                { label: 'Terms of Service', href: '/terms' },
-                                { label: 'Privacy Policy', href: '/privacy' },
-                                { label: 'Return Policy', href: '/return-policy' },
-                                { label: 'Cookie Policy', href: '/cookies' },
+                                { label: 'Terms of Service', href: '/cms/term' },
+                                { label: 'Privacy Policy', href: '/cms/privacy' },
+                                { label: 'Return Policy', href: '/cms/returnPolicy' },
                             ].map((item) => (
                                 <li key={item.label}>
-                                    <motion.a
+                                    {/* <motion.a
                                         href={item.href}
                                         className="flex items-center gap-2 text-sm text-green-100 hover:text-green-300 group transition-colors"
                                         whileHover={{ x: 5 }}
                                     >
                                         <FiArrowUpRight className="opacity-0 group-hover:opacity-100 transition-opacity" />
                                         {item.label}
-                                    </motion.a>
+                                    </motion.a> */}
+                                    <MotionLink
+                                        to={item.href}
+                                        className="flex items-center gap-2 text-sm text-green-100 hover:text-green-300 group transition-colors"
+                                        whileHover={{ x: 5 }}
+                                    >
+                                        <FiArrowUpRight className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        {item.label}
+                                    </MotionLink>
                                 </li>
                             ))}
                         </ul>
@@ -101,21 +112,28 @@ function Footer() {
                         </h3>
                         <div className="space-y-3">
                             <motion.a
-                                href="mailto:support@gorabbit.com"
+                                href={`mailto:${data.email}`}
                                 className="flex items-center gap-2 text-sm text-green-100 hover:text-green-300 transition-colors"
                                 whileHover={{ x: 5 }}
                             >
                                 <FiMail className="flex-shrink-0" />
-                                support@gorabbit.com
+                                {data.email}
                             </motion.a>
                             <motion.a
-                                href="tel:+911234567890"
+                                href={`tel:+91${data.mobile}`}
                                 className="flex items-center gap-2 text-sm text-green-100 hover:text-green-300 transition-colors"
                                 whileHover={{ x: 5 }}
                             >
                                 <FiPhone className="flex-shrink-0" />
-                                +91 123 456 7890
+                                +91 {data.mobile}
                             </motion.a>
+                            <motion.p
+                                className="flex items-center gap-2 text-sm text-green-100 hover:text-green-300 transition-colors"
+                                whileHover={{ x: 5 }}
+                            >
+                                <CiLocationOn className="flex-shrink-0" />
+                                {data.address}
+                            </motion.p>
                         </div>
                     </motion.div>
                 </div>
@@ -163,7 +181,7 @@ function Footer() {
             </div>
 
             {/* Decorative Element */}
-            <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-green-900/30 to-transparent" />
+            {/* <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-green-900/30 to-transparent" /> */}
         </footer>
     );
 }

@@ -42,10 +42,7 @@ function Profile() {
                             title: <Link to={'/'}>Dashboard</Link>,
                         },
                         {
-                            title: "Settings",
-                        },
-                        {
-                            title: "Food Products",
+                            title: "Profile",
                         }
                     ]}
                 />

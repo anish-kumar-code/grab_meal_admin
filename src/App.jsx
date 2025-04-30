@@ -30,18 +30,29 @@ import Shop from './pages/vendor/Shop/Shop'
 import VendorSettings from './pages/vendor/Settings/Settings'
 import VendorProfile from './pages/vendor/Profile/Profile'
 import VendorAddShop from './pages/vendor/Shop/components/AddShop'
+import Profile from './pages/admin/Settings/components/Profile'
+import Charges from './pages/admin/Settings/components/Charges'
+import TermConditions from './pages/admin/Settings/components/Term&Conditions'
+import PrivacyPolicyPage from './pages/admin/Settings/components/PrivacyPolicyPage'
+import RefundPolicy from './pages/admin/Settings/components/RefundPolicy'
+import Cms from './pages/web/Cms/Cms'
+import AddProduct from './pages/vendor/Shop/AddProduct'
+import AllProduct from './pages/vendor/Shop/AllProduct'
+import ProductDetailsForVendor from './pages/vendor/Products/ProductDetails'
 
 function App() {
   return (
     <>
       <Routes>
         <Route index element={<LandingPage />} />
+        <Route path='/cms/:page' element={<Cms />} />
         {/* admin route */}
         <Route path='/admin/login' element={<Login />} />
         <Route path='/admin' element={<AdminPrivateRoute> <AdminLayout /> </AdminPrivateRoute>}>
           <Route index element={<Dashboard />} />
           <Route path='banner' element={<Banner />} />
-          <Route path='product/:serviceName' element={<FoodProduct />} />
+          <Route path='product' element={<FoodProduct />} />
+          {/* <Route path='product/:serviceName' element={<FoodProduct />} /> */}
           <Route path='grocery-product' element={<GroceryProduct />} />
           <Route path='category' element={<Category />} />
           <Route path='sub-category' element={<SubCategory />} />
@@ -51,7 +62,13 @@ function App() {
           <Route path='products/:produtSlug' element={<ProductDetails />} />
           <Route path='user' element={<User />} />
           <Route path='settings' element={<Settings />} />
+          <Route path='settings/profile' element={<Profile />} />
+          <Route path='settings/charges' element={<Charges />} />
+          <Route path='settings/terms-and-conditions' element={<TermConditions />} />
+          <Route path='settings/privacy-policy' element={<PrivacyPolicyPage />} />
+          <Route path='settings/refund-policy' element={<RefundPolicy />} />
         </Route>
+
         {/* vendor route */}
         <Route path='/vendor/login' element={<VendorLogin />} />
         <Route path='/vendor/register' element={<VendorRegister />} />
@@ -59,6 +76,9 @@ function App() {
         <Route path='/vendor' element={<VendorPrivateRoute><VendorLayout /></VendorPrivateRoute>}>
           <Route index element={<VendorDashboard />} />
           <Route path='shop' element={<Shop />} />
+          <Route path='shop/add/:shopId' element={<AddProduct />} />
+          <Route path='shop/:shopId' element={<AllProduct />} />
+          <Route path='shop/:shopId/product/:productId' element={<ProductDetailsForVendor />} />
           <Route path='profile' element={<VendorProfile />} />
           <Route path='settings' element={<VendorSettings />} />
         </Route>

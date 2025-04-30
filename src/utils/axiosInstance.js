@@ -13,7 +13,7 @@ axiosInstance.interceptors.request.use((config) => {
     
 
     if (config.url.includes("/api/admin")) {
-        console.log("Admin Token on axios :".adminToken)
+        // console.log("Admin Token on axios :".adminToken)
         if (adminToken) {
             config.headers.Authorization = `Bearer ${adminToken}`;
         }

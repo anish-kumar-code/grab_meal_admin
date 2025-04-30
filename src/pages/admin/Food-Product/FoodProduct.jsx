@@ -24,13 +24,14 @@ const FoodProduct = () => {
     const [brand, setBrand] = useState([])
     const [vendor, setVendor] = useState([])
 
-    const { serviceName } = useParams()
-    const id = serviceName == 'food' ? FOOD_ID : GROCERY_ID
+    // const { serviceName } = useParams()
+    // const id = serviceName == 'food' ? FOOD_ID : GROCERY_ID
 
-    const fetchProduct = async (id) => {
+    const fetchProduct = async () => {
         setLoading(true);
         try {
-            const productList = await getAllProducts(id);
+            const productList = await getAllProducts();
+            // console.log(productList)
             setProducts(productList);
         } catch {
             message.error('Error fetching product list');
@@ -40,8 +41,8 @@ const FoodProduct = () => {
     }
 
     useEffect(() => {
-        fetchProduct(id)
-    }, [id]);
+        fetchProduct()
+    }, []);
 
     useEffect(() => {
         const fetchMetaData = async () => {
@@ -101,7 +102,8 @@ const FoodProduct = () => {
                     size="large"
                     onClick={() => setIsModalOpen(true)}
                 >
-                    {serviceName == 'food' ? "Add Food Product" : "Add Grocery Product"}
+                    {/* {serviceName == 'food' ? "Add Food Product" : "Add Grocery Product"} */}
+                    Add Food Product
                 </Button>
             </div>
 
@@ -117,9 +119,9 @@ const FoodProduct = () => {
 
             <AddFoodProductModel
                 isModalOpen={isModalOpen}
-                handleOk={() => { setIsModalOpen(false) }}
+                handleOk={() => { setIsModalOpen(false); fetchProduct() }}
                 handleCancel={() => setIsModalOpen(false)}
-                data={{ categories, brand, vendor, transformedSubCategories, subCategories}}
+                data={{ categories, brand, vendor, transformedSubCategories, subCategories }}
             />
 
             <EditFoodProductModel
@@ -127,13 +129,14 @@ const FoodProduct = () => {
                 handleOk={() => {
                     setIsEditModalOpen(false);
                     setSelectedProduct(null);
+                    fetchProduct();
                 }}
                 handleCancel={() => {
                     setIsEditModalOpen(false);
                     setSelectedProduct(null);
                 }}
                 productData={selectedProduct}
-                data={{ categories, brand, vendor, transformedSubCategories, subCategories}}
+                data={{ categories, brand, vendor, transformedSubCategories, subCategories }}
             />
         </>
     );

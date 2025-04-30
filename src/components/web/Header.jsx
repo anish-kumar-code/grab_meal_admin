@@ -1,13 +1,17 @@
-import React, { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { FiChevronDown, FiUser, FiFilePlus } from 'react-icons/fi'
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router';
+import { FiChevronDown, FiUser, FiFilePlus } from 'react-icons/fi';
+import { Spin } from 'antd';
 
-export default function Header() {
-    const [isOpen, setIsOpen] = useState(false)
-    const [vendorDropdownOpen, setVendorDropdownOpen] = useState(false)
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+export default function Header({ data, loading }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const [vendorDropdownOpen, setVendorDropdownOpen] = useState(false);
 
     const menu = [
-        { label: 'Home', href: '#home' },
+        { label: 'Home', href: '/' },
         { label: 'Features', href: '#features' },
         {
             label: 'Vendors',
@@ -18,7 +22,7 @@ export default function Header() {
         },
         { label: 'Customers', href: '#customers' },
         { label: 'Contact', href: '#contact' },
-    ]
+    ];
 
     return (
         <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
@@ -29,14 +33,12 @@ export default function Header() {
                 transition={{ duration: 0.5 }}
             >
                 {/* Logo */}
-                <a href="#home" className="flex items-center gap-2 group">
-                    <div className="w-8 h-8 bg-gradient-to-r from-green-600 to-green-400 rounded-lg flex items-center justify-center">
-                        <span className="text-white font-bold text-xl">GR</span>
-                    </div>
+                <Link to="/" className="flex items-center gap-2 group">
+                    {loading ? <Spin size='small'/> : <img src={`${BASE_URL}/${data.logo}`} alt="logo" height={50} width={50} className="rounded" loading="lazy" />}
                     <span className="text-xl font-bold text-green-600 group-hover:text-green-700 transition-colors">
                         GoRabbit
                     </span>
-                </a>
+                </Link>
 
                 {/* Desktop Menu */}
                 <nav className="hidden md:flex items-center gap-8">
@@ -47,15 +49,27 @@ export default function Header() {
                             onMouseEnter={() => item.submenu && setVendorDropdownOpen(true)}
                             onMouseLeave={() => item.submenu && setVendorDropdownOpen(false)}
                         >
-                            <motion.div
-                                className="flex items-center gap-1 cursor-pointer text-gray-600 hover:text-green-600 transition-colors"
-                                whileHover={{ y: -2 }}
-                            >
-                                <span className="font-medium">{item.label}</span>
-                                {item.submenu && (
+                            {!item.submenu ? (
+                                <motion.div
+                                    whileHover={{ y: -2 }}
+                                    className="flex items-center gap-1"
+                                >
+                                    <Link
+                                        to={item.href}
+                                        className="font-medium text-gray-600 hover:text-green-600 transition-colors"
+                                    >
+                                        {item.label}
+                                    </Link>
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    whileHover={{ y: -2 }}
+                                    className="flex items-center gap-1 cursor-pointer text-gray-600 hover:text-green-600 transition-colors"
+                                >
+                                    <span className="font-medium">{item.label}</span>
                                     <FiChevronDown className={`transition-transform ${vendorDropdownOpen ? 'rotate-180' : ''}`} />
-                                )}
-                            </motion.div>
+                                </motion.div>
+                            )}
 
                             {/* Vendor Dropdown */}
                             {item.submenu && (
@@ -69,14 +83,14 @@ export default function Header() {
                                         >
                                             <div className="bg-white rounded-lg shadow-xl p-2 border border-gray-100">
                                                 {item.submenu.map((subItem) => (
-                                                    <a
+                                                    <Link
                                                         key={subItem.label}
-                                                        href={subItem.href}
+                                                        to={subItem.href}
                                                         className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-green-50 rounded-md transition-colors"
                                                     >
                                                         {subItem.icon}
                                                         <span>{subItem.label}</span>
-                                                    </a>
+                                                    </Link>
                                                 ))}
                                             </div>
                                         </motion.div>
@@ -154,26 +168,27 @@ export default function Header() {
                                                     className="pl-4 space-y-2"
                                                 >
                                                     {item.submenu.map((subItem) => (
-                                                        <a
+                                                        <Link
                                                             key={subItem.label}
-                                                            href={subItem.href}
+                                                            to={subItem.href}
                                                             className="flex items-center gap-3 px-4 py-2 text-gray-500 hover:bg-gray-50 rounded-md"
+                                                            onClick={() => setIsOpen(false)}
                                                         >
                                                             {subItem.icon}
                                                             {subItem.label}
-                                                        </a>
+                                                        </Link>
                                                     ))}
                                                 </motion.div>
                                             )}
                                         </div>
                                     ) : (
-                                        <a
-                                            href={item.href}
+                                        <Link
+                                            to={item.href}
                                             className="block py-2 text-gray-600 hover:text-green-600 transition-colors"
                                             onClick={() => setIsOpen(false)}
                                         >
                                             {item.label}
-                                        </a>
+                                        </Link>
                                     )}
                                 </li>
                             ))}
@@ -182,5 +197,5 @@ export default function Header() {
                 )}
             </AnimatePresence>
         </header>
-    )
+    );
 }

@@ -2,18 +2,16 @@ import React from 'react';
 import { Layout, Avatar, Menu } from 'antd';
 import { useNavigate, useLocation } from 'react-router';
 import { LuLayoutDashboard } from "react-icons/lu";
-import { FaRegUser, FaRegFileAlt, FaStore } from 'react-icons/fa';
+import { FaRegUser, FaStore } from 'react-icons/fa';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { MdLogout } from 'react-icons/md';
 import { useAuth } from '../context/AuthContext';
-
 
 const { Sider } = Layout;
 
 const siderStyle = {
     overflow: 'auto',
     height: '100vh',
-    // backgroundColor: "#00806A",
     position: 'sticky',
     insetInlineStart: 0,
     top: 0,
@@ -26,7 +24,17 @@ function VendorSidebar({ collapsed }) {
     const navigate = useNavigate();
     const location = useLocation();
     const { vendorLogout } = useAuth();
-    const currentPath = location.pathname.replace('/vendor/', '') || 'dashboard';
+
+    // 🔥 Determine which menu item to highlight
+    const getCurrentMenuKey = (path) => {
+        if (path.startsWith('/vendor/shop')) return 'shops';
+        if (path.startsWith('/vendor/profile')) return 'profile';
+        if (path.startsWith('/vendor/settings')) return 'settings';
+        if (path === '/vendor' || path === '/vendor/dashboard') return 'dashboard';
+        return '';
+    };
+
+    const currentPath = getCurrentMenuKey(location.pathname);
 
     const menuItems = [
         {
@@ -47,12 +55,6 @@ function VendorSidebar({ collapsed }) {
             label: 'Profile',
             onClick: () => navigate('/vendor/profile'),
         },
-        // {
-        //     key: 'documents',
-        //     icon: <FaRegFileAlt style={{ fontSize: "18px" }} />,
-        //     label: 'Documents',
-        //     onClick: () => navigate('/vendor/documents'),
-        // },
         {
             type: 'divider',
         },
@@ -67,7 +69,7 @@ function VendorSidebar({ collapsed }) {
             icon: <MdLogout style={{ fontSize: "18px" }} />,
             label: 'Logout',
             onClick: () => {
-                vendorLogout()
+                vendorLogout();
                 navigate('/vendor/login');
             },
         },
@@ -80,15 +82,20 @@ function VendorSidebar({ collapsed }) {
             collapsible
             collapsed={collapsed}
             style={siderStyle}
-        // className="bg-[#001529]"
         >
             <div className="flex items-center gap-3 my-3 mx-2 p-3 bg-zinc-600 rounded-md">
                 <Avatar
                     size={collapsed ? 32 : 64}
-                    src={<img src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" alt="avatar" />}
+                    src={
+                        <img
+                            src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
+                            alt="avatar"
+                        />
+                    }
                 />
                 {!collapsed && <h3 className="text-white font-semibold">Vendor</h3>}
             </div>
+
             <Menu
                 theme="dark"
                 mode="inline"

@@ -99,6 +99,7 @@ const Register = () => {
                         src="https://cdn.pixabay.com/photo/2021/05/27/18/55/woman-6289052_1280.png"
                         alt="Register Visual"
                         className="object-cover w-full h-full"
+                        loading='lazy'
                     />
                 </div>
 

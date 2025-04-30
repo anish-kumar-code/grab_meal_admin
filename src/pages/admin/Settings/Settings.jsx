@@ -9,14 +9,6 @@ function Settings() {
 
     return (
         <>
-            {/* <Row gutter={[16, 16]}>
-                <Col xs={24} sm={24} md={15}>
-                    Left
-                </Col>
-                <Col xs={24} sm={24} md={9}>
-                    Right
-                </Col>
-            </Row> */}
             <Tabs
                 tabPosition="top"
                 items={[

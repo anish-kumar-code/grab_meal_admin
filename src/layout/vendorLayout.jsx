@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Layout, theme } from 'antd';
-import { Outlet } from 'react-router';
+import { Breadcrumb, Layout, theme } from 'antd';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 import VendorSidebar from '../components/VendorSidebar';
 import VendorHeader from '../components/VendorHeader';
 import VendorFooter from '../components/VendorFooter';
@@ -9,9 +9,31 @@ const { Content } = Layout;
 
 const VendorLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
+  const { token: { colorBgContainer, borderRadiusLG } } = theme.useToken();
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const pathSnippets = location.pathname.split('/').filter(i => i);
+  const labelMap = {
+    vendor: "Dashboard",
+    shop: "Shop",
+    product: "Product",
+  };
+
+  const breadcrumbItems = pathSnippets.map((segment, index) => {
+    const isLast = index === pathSnippets.length - 1;
+    return {
+      title: (
+        <span
+          style={{ cursor: 'pointer', color: isLast ? '#000' : '#1677ff' }}
+          onClick={() => !isLast && navigate(-1)}
+        >
+          {labelMap[segment] || segment}
+        </span>
+      ),
+    };
+  });
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -29,6 +51,9 @@ const VendorLayout = () => {
             borderRadius: borderRadiusLG,
           }}
         >
+          <div className='px-4 mb-4'>
+            <Breadcrumb items={breadcrumbItems} />
+          </div>
           <Outlet />
         </Content>
 

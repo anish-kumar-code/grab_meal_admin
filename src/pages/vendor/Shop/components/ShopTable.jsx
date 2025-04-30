@@ -1,12 +1,15 @@
 import React from 'react';
-import { Table, Space, Button, Card, Switch, Tooltip } from 'antd';
+import { Table, Space, Button, Card, Switch, Tooltip, Badge } from 'antd';
 import { shopClose, shopStatus } from '../../../../services/vendor/apiShop';
 import { IoMdEye } from 'react-icons/io';
 import { useNavigate } from 'react-router';
-import { FaEdit } from 'react-icons/fa';
+import { FaEdit, FaPlus } from 'react-icons/fa';
+import { IoStorefront } from 'react-icons/io5';
 
 function ShopTable({ shops, handleEdit }) {
+
     const navigate = useNavigate()
+    console.log(shops)
 
     const columns = [
         {
@@ -40,7 +43,7 @@ function ShopTable({ shops, handleEdit }) {
             title: 'Products',
             dataIndex: 'products',
             key: 'products',
-            render: (products) => products ?? 0,
+            render: (_, record) => (<Tooltip title="All Products" className='hover:cursor-pointer'><Badge count={record.productCount} showZero color="#52c41a" overflowCount={999} /></Tooltip>)
         },
         {
             title: 'Total Orders',
@@ -63,8 +66,9 @@ function ShopTable({ shops, handleEdit }) {
             align: "right",
             render: (_, record) => (
                 <Space size="small">
-                    {/* <Tooltip title="Products"><Button type="primary" icon={<IoStorefront />} onClick={() => navigate(`admin/vendor/${record.shop_name}-${record._id}/products`)}></Button></Tooltip> */}
-                    <Button type="primary" icon={<FaEdit />} onClick={() => handleEdit(record)}>Edit</Button>
+                    <Tooltip title="All Products"><Button type="primary" icon={<IoStorefront />} onClick={() => navigate(`/vendor/shop/${record._id}`)}></Button></Tooltip>
+                    <Tooltip title="Add Products"><Button type="primary" icon={<FaPlus />} onClick={() => navigate(`/vendor/shop/add/${record._id}`)}></Button></Tooltip>
+                    <Tooltip title="Edit Shop"><Button type="primary" icon={<FaEdit />} onClick={() => handleEdit(record)}></Button></Tooltip>
                     {/* <Tooltip title="Details"><Button type="primary" icon={<IoMdEye />} onClick={() => navigate(`/admin/vendor/${record._id}`)}></Button></Tooltip> */}
                 </Space>
             )
@@ -76,7 +80,7 @@ function ShopTable({ shops, handleEdit }) {
             <Table
                 columns={columns}
                 dataSource={shops}
-                rowKey="id"
+                rowKey="_id"
                 pagination={shops?.length > 10 ? { pageSize: 10 } : false}
             />
         </Card>

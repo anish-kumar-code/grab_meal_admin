@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Avatar, Layout, Menu } from 'antd'
 const { Sider } = Layout
 
@@ -25,90 +25,65 @@ function AdminSidebar({ collapsed }) {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Get the current path without the leading slash
-    const currentPath = location.pathname.replace('/', '') || 'dashboard';
+    const pathSnippets = location.pathname.split('/').slice(2);
+    const selectedKey = pathSnippets[pathSnippets.length - 1] || 'dashboard';
+    const openKey = pathSnippets.length > 1 ? pathSnippets[0] : '';
+    const [openKeys, setOpenKeys] = useState(openKey ? [openKey] : []);
+
+    useEffect(() => {
+        setOpenKeys(openKey ? [openKey] : []);
+    }, [openKey]);
 
     const menuItems = [
-        {
-            key: 'dashboard',
-            icon: <LuLayoutDashboard style={{ fontSize: "18px" }} />,
-            label: 'Dashboard',
-            onClick: () => navigate('/admin'),
-        },
-        {
-            key: 'banner',
-            icon: <IoImagesOutline style={{ fontSize: "18px" }} />,
-            label: 'Banner',
-            onClick: () => navigate('/admin/banner'),
-        },
-        {
-            key: 'category',
-            icon: <TbCategory2 style={{ fontSize: "18px" }} />,
-            label: 'Category',
-            onClick: () => navigate('/admin/category'),
-        },
-        {
-            key: 'sub-category',
-            icon: <MdOutlineCategory style={{ fontSize: "18px" }} />,
-            label: 'Sub Category',
-            onClick: () => navigate('/admin/sub-category'),
-        },
-        {
-            key: 'product/food',
-            icon: <IoFastFoodOutline style={{ fontSize: "18px" }} />,
-            label: 'Food Product',
-            onClick: () => navigate('/admin/product/food'),
-        },
-        {
-            key: 'product/grocery',
-            icon: <GrBasket style={{ fontSize: "18px" }} />,
-            label: 'Grocery Product',
-            onClick: () => navigate('/admin/product/grocery'),
-        },
-        {
-            type: 'divider',
-        },
-        {
-            key: 'vendor',
-            icon: <LuUsers style={{ fontSize: "18px" }} />,
-            label: 'Vendor',
-            onClick: () => navigate('/admin/vendor'),
-        },
-        {
-            key: 'user',
-            icon: <FaRegUser style={{ fontSize: "18px" }} />,
-            label: 'User',
-            onClick: () => navigate('/admin/user'),
-        },
+        { key: 'dashboard', icon: <LuLayoutDashboard />, label: 'Dashboard', onClick: () => navigate('/admin') },
+        { key: 'banner', icon: <IoImagesOutline />, label: 'Banner', onClick: () => navigate('/admin/banner') },
+        { key: 'category', icon: <TbCategory2 />, label: 'Category', onClick: () => navigate('/admin/category') },
+        { key: 'sub-category', icon: <MdOutlineCategory />, label: 'Sub Category', onClick: () => navigate('/admin/sub-category') },
+        { key: 'product/food', icon: <IoFastFoodOutline />, label: 'Product', onClick: () => navigate('/admin/product') },
+        // { key: 'product/grocery', icon: <GrBasket />, label: 'Grocery Product', onClick: () => navigate('/admin/product/grocery') },
+        { type: 'divider' },
+        { key: 'vendor', icon: <LuUsers />, label: 'Vendor', onClick: () => navigate('/admin/vendor') },
+        { key: 'user', icon: <FaRegUser />, label: 'User', onClick: () => navigate('/admin/user') },
         {
             key: 'settings',
-            icon: <IoSettingsOutline style={{ fontSize: "18px" }} />,
+            icon: <IoSettingsOutline />,
             label: 'Settings',
-            onClick: () => navigate('/admin/settings'),
+            children: [
+                { key: 'profile', label: 'Profile', onClick: () => navigate('/admin/settings/profile') },
+                { key: 'charges', label: 'Site', onClick: () => navigate('/admin/settings/charges') },
+                { key: 'terms-and-conditions', label: 'Terms & Conditions', onClick: () => navigate('/admin/settings/terms-and-conditions') },
+                { key: 'privacy-policy', label: 'Privacy Policy', onClick: () => navigate('/admin/settings/privacy-policy') },
+                { key: 'refund-policy', label: 'Refund Policy', onClick: () => navigate('/admin/settings/refund-policy') },
+            ]
         }
-    ]
+    ];
 
     return (
-        <>
-            <Sider width={210} trigger={null} collapsible collapsed={collapsed} style={siderStyle}>
-                <div className="demo-logo-vertical" />
-                <div className='flex items-center gap-3 my-2 mx-1 p-3 bg-zinc-600 rounded-md'>
-                    <Avatar size={collapsed ? 32 : 64} src={<img src='https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg' alt="avatar" />} />
-                    {/* {!collapsed && <h3 className='text-white'>Anish</h3>} */}
-                </div>
-                <Menu
-                    theme="dark"
-                    mode="inline"
-                    selectedKeys={[currentPath]}
-                    items={menuItems}
-                    onClick={(e) => {
-                        const clickedItem = menuItems.find(item => item.key === e.key || (item.children || []).some(child => child.key === e.key))
-                        if (clickedItem?.onClick) clickedItem.onClick()
-                    }}
-                    style={{ fontSize: "15px" }}
+        <Sider
+            width={210}
+            trigger={null}
+            collapsible
+            collapsed={collapsed}
+            style={siderStyle}
+        >
+            <div className="demo-logo-vertical" />
+            <div className="flex items-center gap-3 my-2 mx-1 p-3 bg-zinc-600 rounded-md">
+                <Avatar
+                    size={collapsed ? 32 : 64}
+                    src={<img src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" alt="avatar" />}
                 />
-            </Sider>
-        </>
+            </div>
+
+            <Menu
+                theme="dark"
+                mode="inline"
+                selectedKeys={[selectedKey]}
+                openKeys={openKeys}
+                onOpenChange={(keys) => setOpenKeys(keys)}
+                items={menuItems}
+                style={{ fontSize: 15 }}
+            />
+        </Sider>
     )
 }
 

@@ -1,26 +1,91 @@
-import React, { useState } from 'react';
-import { Form, Input, InputNumber, Upload, Button, message, Breadcrumb } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
+import { Form, Input, InputNumber, Upload, Button, message, Breadcrumb, Spin, Row, Col } from 'antd';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { Link } from 'react-router';
+import { getAllSettings, updateSettings } from '../../../../services/apiSettings';
+import TextArea from 'antd/es/input/TextArea';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 function Charges() {
+    const [settingData, setSettingData] = useState({})
     const [form] = Form.useForm();
-    const [logoFile, setLogoFile] = useState(null);
+    const [imageUrl, setImageUrl] = useState();
+    const [loading, setLoading] = useState(true);
 
-    const onFinish = (values) => {
-        console.log('Form values:', values);
-        // Here you would typically make an API call to save these settings
-        message.success('Settings updated successfully!');
+    const beforeUpload = (file) => {
+        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+        if (!isJpgOrPng) {
+            message.error('You can only upload JPG/PNG files!');
+            return false;
+        }
+        const isLt10M = file.size / 1024 / 1024 < 10;
+        if (!isLt10M) {
+            message.error('Image must be smaller than 10MB!');
+            return false;
+        }
+        return false;
     };
 
-    const handleLogoChange = (info) => {
-        if (info.file.status === 'done') {
-            setLogoFile(info.file);
-            message.success(`${info.file.name} file uploaded successfully`);
-        } else if (info.file.status === 'error') {
-            message.error(`${info.file.name} file upload failed.`);
+    const fetchSetting = async () => {
+        try {
+            const data = await getAllSettings();
+            setSettingData(data.data.settings[0])
+            setImageUrl(`${BASE_URL}/${data.data.settings[0].logo}`)
+        } catch (error) {
+            message.error("Failed to load settings.");
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => { fetchSetting() }, [])
+
+    const handleChange = (info) => {
+        if (info.file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setImageUrl(reader.result);
+            };
+            reader.readAsDataURL(info.file);
         }
     };
+
+    const onFinish = async (values) => {
+        const formData = new FormData();
+        formData.append("brandName", values.brandName);
+        formData.append("commission", values.commission);
+        formData.append("gst", values.gst);
+        formData.append("onboardingFee", values.onboardingfee);
+        formData.append("email", values.email);
+        formData.append("mobile", values.mobile);
+        formData.append("address", values.address);
+
+        // console.log("This is file original object")
+        // console.log(values.image.fileList[1].originFileObj)
+
+        // console.log("This is file ")
+        // console.log(values.image.file)
+
+        if (values.image && values.image.file) {
+            formData.append("image", values.image.file);
+        }
+
+        try {
+            const res = await updateSettings(settingData._id, formData);
+            message.success('Settings updated successfully!');
+        } catch (error) {
+            message.error('Error updating settings');
+        }
+    };
+
+    const uploadButton = (
+        <div>
+            {loading ? <LoadingOutlined /> : <PlusOutlined />}
+            <div style={{ marginTop: 8 }}>Upload</div>
+        </div>
+    );
+
+    if (loading) return <Spin size="large" fullscreen />;
 
     return (
         <>
@@ -31,10 +96,7 @@ function Charges() {
                             title: <Link to={'/'}>Dashboard</Link>,
                         },
                         {
-                            title: "Settings",
-                        },
-                        {
-                            title: "Site Settings",
+                            title: "Charges",
                         }
                     ]}
                 />
@@ -45,85 +107,207 @@ function Charges() {
                     form={form}
                     layout="vertical"
                     onFinish={onFinish}
+                    initialValues={{
+                        brandName: settingData.brandName,
+                        commission: settingData.commission,
+                        gst: settingData.gst,
+                        onboardingfee: settingData.onboardingFee,
+                        logo: settingData.logo,
+                        email: settingData.email,
+                        mobile: settingData.mobile,
+                        address: settingData.address,
+                    }}
                     className="max-w-2xl"
                 >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* site details */}
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item
+                                label="Site Name"
+                                name="brandName"
+                                rules={[{ required: true, message: 'Please enter brand name' }]}
+                            >
+                                <Input placeholder="Enter brand name" size='large' />
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item label="Site Logo" name="image" >
+                                <Upload
+                                    name="image"
+                                    listType="picture-card"
+                                    className="avatar-uploader"
+                                    showUploadList={false}
+                                    beforeUpload={beforeUpload}
+                                    onChange={handleChange}
+                                    fileList={imageUrl ? [{ url: imageUrl }] : []}
+                                >
+                                    {imageUrl ? (
+                                        <img
+                                            src={imageUrl}
+                                            alt="Preview"
+                                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                        />
+                                    ) : (
+                                        uploadButton
+                                    )}
+                                </Upload>
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+                    {/* commission manage */}
+                    <Row gutter={16}>
+                        <Col span={8}>
+                            <Form.Item
+                                label="Commission (%)"
+                                name="commission"
+                                rules={[{ required: true, message: 'Please enter commission' }]}
+                            >
+                                <InputNumber
+                                    min={0}
+                                    max={100}
+                                    style={{ width: '100%' }}
+                                    placeholder="Enter commission percentage"
+                                    size='large'
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={8}>
+                            <Form.Item
+                                label="GST (%)"
+                                name="gst"
+                                rules={[{ required: true, message: 'Please enter commission' }]}
+                            >
+                                <InputNumber
+                                    min={0}
+                                    max={100}
+                                    style={{ width: '100%' }}
+                                    placeholder="Enter commission percentage"
+                                    size='large'
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={8}>
+                            <Form.Item
+                                label="Onboarding Fee"
+                                name="onboardingfee"
+                                rules={[{ required: true, message: 'Please enter onboarding fee' }]}
+                            >
+                                <InputNumber
+                                    min={0}
+                                    style={{ width: '100%' }}
+                                    placeholder="Enter Onboarding Fee"
+                                    size='large'
+                                />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+                    {/* site manage */}
+                    <Row gutter={16}>
+                        <Col span={8}>
+                            <Form.Item
+                                label="Email"
+                                name="email"
+                                rules={[{ required: true, message: 'Please enter email' }]}
+                            >
+                                <Input placeholder="Enter Email" size='large' />
+                            </Form.Item>
+                        </Col>
+                        <Col span={8}>
+                            <Form.Item
+                                label="Mobile No"
+                                name="mobile"
+                                rules={[{ required: true, message: 'Please enter mobile no' }]}
+                            >
+                                <Input placeholder="Enter Mobile No." size='large' />
+                            </Form.Item>
+                        </Col>
+                        <Col span={8}>
+                            <Form.Item
+                                label="Address"
+                                name="address"
+                                rules={[{ required: true, message: 'Please enter address' }]}
+                            >
+                                {/* <Input placeholder="Enter Address" size='large' /> */}
+                                <TextArea rows={5} placeholder="Enter Term and Conditions here ..." required />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+                    {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <Form.Item
-                            label="Brand Name"
+                            label="Site Name"
                             name="brandName"
                             rules={[{ required: true, message: 'Please enter brand name' }]}
                         >
                             <Input placeholder="Enter brand name" size='large' />
                         </Form.Item>
 
-                        <Form.Item
-                            label="Logo"
-                            name="logo"
-                        >
+                        <Form.Item label="Site Logo" name="image" >
                             <Upload
-                                name="logo"
-                                listType="picture"
-                                maxCount={1}
-                                onChange={handleLogoChange}
+                                name="image"
+                                listType="picture-card"
+                                className="avatar-uploader"
+                                showUploadList={false}
+                                beforeUpload={beforeUpload}
+                                onChange={handleChange}
+                                fileList={imageUrl ? [{ url: imageUrl }] : []}
                             >
-                                <Button icon={<UploadOutlined />}>Upload Logo</Button>
+                                {imageUrl ? (
+                                    <img
+                                        src={imageUrl}
+                                        alt="Preview"
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                    />
+                                ) : (
+                                    uploadButton
+                                )}
                             </Upload>
                         </Form.Item>
 
                         <Form.Item
-                            label="Food Tax (%)"
-                            name="foodTax"
-                            rules={[{ required: true, message: 'Please enter food tax' }]}
+                            label="Commission (%)"
+                            name="commission"
+                            rules={[{ required: true, message: 'Please enter commission' }]}
                         >
                             <InputNumber
                                 min={0}
                                 max={100}
                                 style={{ width: '100%' }}
-                                placeholder="Enter food tax percentage"
+                                placeholder="Enter commission percentage"
                                 size='large'
                             />
                         </Form.Item>
 
                         <Form.Item
-                            label="Grocery Tax (%)"
-                            name="groceryTax"
-                            rules={[{ required: true, message: 'Please enter grocery tax' }]}
+                            label="GST (%)"
+                            name="gst"
+                            rules={[{ required: true, message: 'Please enter gst' }]}
                         >
                             <InputNumber
                                 min={0}
                                 max={100}
                                 style={{ width: '100%' }}
-                                placeholder="Enter grocery tax percentage"
+                                placeholder="Enter gst percentage"
                                 size='large'
                             />
                         </Form.Item>
 
                         <Form.Item
-                            label="Shipping Charge"
-                            name="shippingCharge"
-                            rules={[{ required: true, message: 'Please enter shipping charge' }]}
+                            label="Onboarding Fee"
+                            name="onboardingfee"
+                            rules={[{ required: true, message: 'Please enter onboarding fee' }]}
                         >
                             <InputNumber
                                 min={0}
                                 style={{ width: '100%' }}
-                                placeholder="Enter shipping charge"
+                                placeholder="Enter Onboarding Fee"
                                 size='large'
                             />
                         </Form.Item>
 
-                        <Form.Item
-                            label="Extra Charge"
-                            name="extraCharge"
-                            rules={[{ required: true, message: 'Please enter extra charge' }]}
-                        >
-                            <InputNumber
-                                min={0}
-                                style={{ width: '100%' }}
-                                placeholder="Enter extra charge"
-                                size='large'
-                            />
-                        </Form.Item>
-                    </div>
+                    </div> */}
 
                     <Form.Item>
                         <Button type="primary" htmlType="submit" size="large">

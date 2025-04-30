@@ -10,9 +10,10 @@ export const addProduct = async (formData) => {
     return response.data;
 };
 
-export const getAllProducts = async (id) => {
+export const getAllProducts = async () => {
     try {
-        const response = await axiosInstance(`/api/admin/product/list/${id}`);
+        const response = await axiosInstance(`/api/admin/product/list`);
+        // const response = await axiosInstance(`/api/admin/product/list/${id}`);
         return response.data.data;
     } catch (error) {
         message.error('Error fetching product list');
