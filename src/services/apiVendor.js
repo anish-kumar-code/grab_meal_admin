@@ -30,6 +30,15 @@ export const getVendorProduct = async(id)=>{
     }
 }
 
+export const getVendorShop = async(id)=>{
+    try {
+        const response = await axiosInstance.get(`/api/admin/vendor/shop/list/${id}`);
+        return response.data.data;
+    } catch (error) {
+        message.error('Error fetching vendor shops');
+    }
+}
+
 export const vendorBlock = async (id, status) => {
     try {
         const response = await axiosInstance.patch(`/api/admin/vendor/block/${id}`, { status });

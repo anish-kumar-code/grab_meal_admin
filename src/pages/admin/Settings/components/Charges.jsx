@@ -11,6 +11,7 @@ function Charges() {
     const [form] = Form.useForm();
     const [imageUrl, setImageUrl] = useState();
     const [loading, setLoading] = useState(true);
+    const [updateLoading, setUpdateLoading] = useState(false);
 
     const beforeUpload = (file) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
@@ -51,6 +52,7 @@ function Charges() {
     };
 
     const onFinish = async (values) => {
+        setUpdateLoading(true)
         const formData = new FormData();
         formData.append("brandName", values.brandName);
         formData.append("commission", values.commission);
@@ -75,6 +77,8 @@ function Charges() {
             message.success('Settings updated successfully!');
         } catch (error) {
             message.error('Error updating settings');
+        }finally{
+            setUpdateLoading(false)
         }
     };
 
@@ -89,18 +93,6 @@ function Charges() {
 
     return (
         <>
-            <div className='px-4'>
-                <Breadcrumb
-                    items={[
-                        {
-                            title: <Link to={'/'}>Dashboard</Link>,
-                        },
-                        {
-                            title: "Charges",
-                        }
-                    ]}
-                />
-            </div>
             <div className="p-6">
                 <h2 className="text-2xl font-bold mb-6">Manage Settings</h2>
                 <Form
@@ -310,7 +302,7 @@ function Charges() {
                     </div> */}
 
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" size="large">
+                        <Button type="primary" htmlType="submit" size="large" loading={updateLoading}>
                             Save Changes
                         </Button>
                     </Form.Item>

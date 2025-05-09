@@ -10,7 +10,7 @@ import { useAuth } from '../context/AuthContext'
 const { Header } = Layout
 const { Text } = Typography
 
-function AdminHeader({ collapsed, setCollapsed, background }) {
+function AdminHeader({ collapsed, setCollapsed, background, settingData}) {
     const navigate = useNavigate()
     const [currentTime, setCurrentTime] = useState(new Date())
     const { adminLogout } = useAuth(); 
@@ -68,7 +68,6 @@ function AdminHeader({ collapsed, setCollapsed, background }) {
                     </Space>
                 </div>
             ),
-            onClick: () => {/* Add your logout logic here */ }
         },
     ]
 
@@ -86,7 +85,7 @@ function AdminHeader({ collapsed, setCollapsed, background }) {
                         onClick={() => setCollapsed(!collapsed)}
                         className="text-xl w-12 h-12 text-blue-600 flex items-center justify-center"
                     />
-                    <Text strong className="text-xl text-blue-600 hidden sm:block">Go Rabbit</Text>
+                    {/* <Text strong className="text-xl text-blue-600 hidden sm:block">{settingData.brandName}</Text> */}
                 </div>
 
                 <div className="flex items-center gap-6">

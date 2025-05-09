@@ -1,44 +1,27 @@
-import { Breadcrumb, Button, Input, Modal } from 'antd'
-import React, { useState } from 'react'
-import { FaPlus } from 'react-icons/fa'
-import { Link } from 'react-router'
+import { Input, Modal } from 'antd'
+import React, { useEffect, useState } from 'react'
 import VendorTable from './components/VendorTable'
-import AddSubCategoryModel from '../SubCategory/components/AddSubCategoryModel'
-import EditSubCategoryModel from '../SubCategory/components/EditSubCategoryModel'
+import { getAllVendor } from '../../../services/apiVendor'
 
 function Vendor() {
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [searchText, setSearchText] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [dataSource, setDataSource] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    // const showModal = () => {
-    //     setIsModalOpen(true);
-    // };
-
-    // const handleOk = () => {
-    //     setIsModalOpen(false);
-    // };
-
-    // const handleCancel = () => {
-    //     setIsModalOpen(false);
-    // };
-
-    // const showEditModal = (category) => {
-    //     setSelectedCategory(category);
-    //     setIsEditModalOpen(true);
-    // };
-
-    // const handleEditOk = () => {
-    //     setIsEditModalOpen(false);
-    //     setSelectedCategory(null);
-    // };
-
-    // const handleEditCancel = () => {
-    //     setIsEditModalOpen(false);
-    //     setSelectedCategory(null);
-    // };
+    useEffect(() => {
+        setLoading(true)
+        const fetchVendor = async () => {
+            try {
+                const res = await getAllVendor()
+                setDataSource(res)
+            } catch (error) {
+                console.log(error)
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchVendor()
+    }, [])
 
     const handleDelete = (vendor) => {
         console.log(vendor)
@@ -56,18 +39,6 @@ function Vendor() {
 
     return (
         <>
-            <div className='px-4'>
-                <Breadcrumb
-                    items={[
-                        {
-                            title: <Link to={'/'}>Dashboard</Link>,
-                        },
-                        {
-                            title: "vendors",
-                        }
-                    ]}
-                />
-            </div>
             <div className='lg:px-10 px-5 my-8 md:flex items-center gap-4 justify-between '>
                 <Input.Search
                     placeholder="Search by name"
@@ -78,32 +49,8 @@ function Vendor() {
                     }}
                     size="large"
                 />
-                {/* <Button
-                    type='primary'
-                    icon={<FaPlus />}
-                    size="large"
-                    className="hover:opacity-90 transition-all duration-300"
-                    onClick={showModal}
-                >
-                    Add Sub Category
-                </Button> */}
             </div>
-            <VendorTable searchText={searchText} onDelete={handleDelete} />
-
-            {/* modal */}
-            {/* <AddSubCategoryModel
-                isModalOpen={isModalOpen}
-                handleOk={handleOk}
-                handleCancel={handleCancel}
-            /> */}
-
-            {/* edit modal */}
-            {/* <EditSubCategoryModel
-                isModalOpen={isEditModalOpen}
-                handleOk={handleEditOk}
-                handleCancel={handleEditCancel}
-                categoryData={selectedCategory}
-            /> */}
+            <VendorTable data={dataSource} searchText={searchText} onDelete={handleDelete} loading={loading} />
         </>
     )
 }

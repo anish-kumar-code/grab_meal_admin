@@ -24,21 +24,6 @@ function ChangePassword() {
 
     return (
         <>
-            <div className='px-4'>
-                <Breadcrumb
-                    items={[
-                        {
-                            title: <Link to={'/'}>Dashboard</Link>,
-                        },
-                        {
-                            title: "Settings",
-                        },
-                        {
-                            title: "Change Password",
-                        }
-                    ]}
-                />
-            </div>
             <div className="p-6 lg:w-1/2">
                 <h2 className="text-2xl font-bold mb-6">Change Password</h2>
                 <Form

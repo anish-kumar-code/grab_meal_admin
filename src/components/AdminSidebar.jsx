@@ -2,86 +2,161 @@ import React, { useEffect, useState } from 'react'
 import { Avatar, Layout, Menu } from 'antd'
 const { Sider } = Layout
 
-import { LuLayoutDashboard, LuUsers } from "react-icons/lu";
-import { TbCategory2 } from 'react-icons/tb';
-import { MdOutlineCategory } from 'react-icons/md';
-import { useNavigate, useLocation } from 'react-router';
-import { FaRegUser } from 'react-icons/fa';
-import { IoFastFoodOutline, IoImagesOutline, IoSettingsOutline } from 'react-icons/io5';
-import { GrBasket } from 'react-icons/gr';
+import { useNavigate, useLocation } from 'react-router'
 
-const siderStyle = {
-    overflow: 'auto',
-    height: '100vh',
-    position: 'sticky',
-    insetInlineStart: 0,
-    top: 0,
-    bottom: 0,
-    scrollbarWidth: 'thin',
-    scrollbarGutter: 'stable'
-};
+import { LuLayoutDashboard, LuUsers } from "react-icons/lu"
+import { TbCategory2 } from 'react-icons/tb'
+import { MdOutlineCategory } from 'react-icons/md'
+import { FaClipboardList, FaRegUser } from 'react-icons/fa'
+import { IoFastFoodOutline, IoImagesOutline, IoSettingsOutline, IoStorefront } from 'react-icons/io5'
+import { FaArrowRightToBracket } from 'react-icons/fa6'
+import { useAuth } from '../context/AuthContext'
 
-function AdminSidebar({ collapsed }) {
-    const navigate = useNavigate();
-    const location = useLocation();
+const AdminSidebar = ({ collapsed, settingData }) => {
+    const navigate = useNavigate()
+    const location = useLocation()
+    const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-    const pathSnippets = location.pathname.split('/').slice(2);
-    const selectedKey = pathSnippets[pathSnippets.length - 1] || 'dashboard';
-    const openKey = pathSnippets.length > 1 ? pathSnippets[0] : '';
-    const [openKeys, setOpenKeys] = useState(openKey ? [openKey] : []);
+    const pathSnippets = location.pathname.split('/').slice(2)
+    const selectedKey = pathSnippets[pathSnippets.length - 1] || 'dashboard'
+    const openKey = pathSnippets.length > 1 ? pathSnippets[0] : ''
+    const [openKeys, setOpenKeys] = useState(openKey ? [openKey] : [])
+    const { adminLogout } = useAuth();
 
     useEffect(() => {
-        setOpenKeys(openKey ? [openKey] : []);
-    }, [openKey]);
+        setOpenKeys(openKey ? [openKey] : [])
+    }, [openKey])
 
     const menuItems = [
-        { key: 'dashboard', icon: <LuLayoutDashboard />, label: 'Dashboard', onClick: () => navigate('/admin') },
-        { key: 'banner', icon: <IoImagesOutline />, label: 'Banner', onClick: () => navigate('/admin/banner') },
-        { key: 'category', icon: <TbCategory2 />, label: 'Category', onClick: () => navigate('/admin/category') },
-        { key: 'sub-category', icon: <MdOutlineCategory />, label: 'Sub Category', onClick: () => navigate('/admin/sub-category') },
-        { key: 'product/food', icon: <IoFastFoodOutline />, label: 'Product', onClick: () => navigate('/admin/product') },
-        // { key: 'product/grocery', icon: <GrBasket />, label: 'Grocery Product', onClick: () => navigate('/admin/product/grocery') },
-        { type: 'divider' },
-        { key: 'vendor', icon: <LuUsers />, label: 'Vendor', onClick: () => navigate('/admin/vendor') },
-        { key: 'user', icon: <FaRegUser />, label: 'User', onClick: () => navigate('/admin/user') },
+        {
+            type: 'divider'
+        },
+        {
+            key: 'dashboard',
+            icon: <LuLayoutDashboard size={18} />,
+            label: 'Dashboard',
+            onClick: () => navigate('/admin')
+        },
+        {
+            key: 'banner',
+            icon: <IoImagesOutline size={18} />,
+            label: 'Banner',
+            onClick: () => navigate('/admin/banner')
+        },
+        {
+            key: 'category',
+            icon: <TbCategory2 size={18} />,
+            label: 'Category',
+            onClick: () => navigate('/admin/category')
+        },
+        {
+            key: 'sub-category',
+            icon: <MdOutlineCategory size={18} />,
+            label: 'Sub Category',
+            onClick: () => navigate('/admin/sub-category')
+        },
+        {
+            key: 'product',
+            icon: <IoFastFoodOutline size={18} />,
+            label: 'Product',
+            onClick: () => navigate('/admin/product')
+        },
+        {
+            key: 'vendor',
+            icon: <LuUsers size={18} />,
+            label: 'Vendor',
+            onClick: () => navigate('/admin/vendor')
+        },
+        {
+            key: 'shop',
+            icon: <IoStorefront size={18} />,
+            label: 'Shop',
+            onClick: () => navigate('/admin/shop')
+        },
+        {
+            key: 'order',
+            icon: <FaClipboardList size={18} />,
+            label: 'Order',
+            onClick: () => navigate('/admin/order')
+        },
+        {
+            key: 'user',
+            icon: <FaRegUser size={18} />,
+            label: 'User',
+            onClick: () => navigate('/admin/user')
+        },
         {
             key: 'settings',
-            icon: <IoSettingsOutline />,
+            icon: <IoSettingsOutline size={18} />,
             label: 'Settings',
             children: [
-                { key: 'profile', label: 'Profile', onClick: () => navigate('/admin/settings/profile') },
-                { key: 'charges', label: 'Site', onClick: () => navigate('/admin/settings/charges') },
-                { key: 'terms-and-conditions', label: 'Terms & Conditions', onClick: () => navigate('/admin/settings/terms-and-conditions') },
-                { key: 'privacy-policy', label: 'Privacy Policy', onClick: () => navigate('/admin/settings/privacy-policy') },
-                { key: 'refund-policy', label: 'Refund Policy', onClick: () => navigate('/admin/settings/refund-policy') },
+                {
+                    key: 'profile',
+                    label: 'Profile',
+                    onClick: () => navigate('/admin/settings/profile')
+                },
+                {
+                    key: 'charges',
+                    label: 'Site',
+                    onClick: () => navigate('/admin/settings/charges')
+                },
+                {
+                    key: 'terms-and-conditions',
+                    label: 'Terms & Conditions',
+                    onClick: () => navigate('/admin/settings/terms-and-conditions')
+                },
+                {
+                    key: 'privacy-policy',
+                    label: 'Privacy Policy',
+                    onClick: () => navigate('/admin/settings/privacy-policy')
+                },
+                {
+                    key: 'refund-policy',
+                    label: 'Refund Policy',
+                    onClick: () => navigate('/admin/settings/refund-policy')
+                }
             ]
-        }
-    ];
+        },
+        {
+            type: 'divider'
+        },
+        {
+            key: 'logout',
+            icon: <FaArrowRightToBracket size={18} />,
+            label: 'Logout',
+            onClick: () => { adminLogout(); navigate("/admin/login"); }
+        },
+    ]
 
     return (
         <Sider
-            width={210}
-            trigger={null}
+            width={240}
+            theme="light"
             collapsible
             collapsed={collapsed}
-            style={siderStyle}
+            trigger={null}
+            className="shadow-md border-r"
+            style={{ height: '100vh', position: 'sticky', top: 0, overflow: 'auto' }}
         >
-            <div className="demo-logo-vertical" />
-            <div className="flex items-center gap-3 my-2 mx-1 p-3 bg-zinc-600 rounded-md">
+            <div className="flex items-center justify-center py-4">
                 <Avatar
-                    size={collapsed ? 32 : 64}
-                    src={<img src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" alt="avatar" />}
+                    size={collapsed ? 40 : 64}
+                    src={`${BASE_URL}/${settingData.logo}`}
+                    className="transition-all duration-300"
                 />
+                {!collapsed && (
+                    <span className="ml-3 font-semibold text-2xl">{settingData.brandName}</span>
+                )}
             </div>
 
             <Menu
-                theme="dark"
                 mode="inline"
+                theme="light"
                 selectedKeys={[selectedKey]}
                 openKeys={openKeys}
                 onOpenChange={(keys) => setOpenKeys(keys)}
                 items={menuItems}
-                style={{ fontSize: 15 }}
+                className="text-[15px] font-medium"
             />
         </Sider>
     )

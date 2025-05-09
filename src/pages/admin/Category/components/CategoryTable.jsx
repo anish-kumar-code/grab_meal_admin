@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { getAllCategory, updateStatus } from '@services/apiCategory';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-const CategoryTable = ({ searchText, data, onEdit, onDelete }) => {
+const CategoryTable = ({ searchText, data, onEdit, onDelete, loading }) => {
 
     const columns = [
         {
@@ -68,6 +68,7 @@ const CategoryTable = ({ searchText, data, onEdit, onDelete }) => {
         scroll={{ x: true }}
         bordered={false}
         size='small'
+        loading={loading}
     />;
 }
 

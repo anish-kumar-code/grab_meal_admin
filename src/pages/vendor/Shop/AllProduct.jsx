@@ -138,16 +138,6 @@ function AllProduct() {
 
     return (
         <>
-            {/* <div className='px-4 mb-4'>
-                <Breadcrumb
-                    items={[
-                        { title: <Link to="/vendor">Dashboard</Link> },
-                        { title: <Link to="/vendor/shop">{vendorDetails[0].name}</Link> },
-                        { title: <Link to="/vendor/shop">{shopDetails[0].name}</Link> },
-                        { title: "Your Products" },
-                    ]}
-                />
-            </div> */}
 
             <Card>
                 <div className='flex justify-between mb-4'>

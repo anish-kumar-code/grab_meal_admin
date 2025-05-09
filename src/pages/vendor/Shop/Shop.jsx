@@ -63,7 +63,7 @@ function Shop() {
                     handleCancel={handleCancel}
                     handleOk={handleOk}
                 />
-                
+
                 <EditShopModel
                     isModalOpen={isEditModalOpen}
                     handleOk={() => {

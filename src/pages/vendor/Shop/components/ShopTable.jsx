@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Space, Button, Card, Switch, Tooltip, Badge } from 'antd';
+import { Table, Space, Button, Card, Switch, Tooltip, Badge, Tag } from 'antd';
 import { shopClose, shopStatus } from '../../../../services/vendor/apiShop';
 import { IoMdEye } from 'react-icons/io';
 import { useNavigate } from 'react-router';
@@ -9,7 +9,7 @@ import { IoStorefront } from 'react-icons/io5';
 function ShopTable({ shops, handleEdit }) {
 
     const navigate = useNavigate()
-    console.log(shops)
+    // console.log(shops)
 
     const columns = [
         {
@@ -46,10 +46,21 @@ function ShopTable({ shops, handleEdit }) {
             render: (_, record) => (<Tooltip title="All Products" className='hover:cursor-pointer'><Badge count={record.productCount} showZero color="#52c41a" overflowCount={999} /></Tooltip>)
         },
         {
-            title: 'Total Orders',
+            title: 'Today Orders',
             dataIndex: 'orders',
             key: 'orders',
             render: (orders) => orders ?? 0,
+        },
+        {
+            title: 'Wallet',
+            dataIndex: 'wallet',
+            key: 'wallet',
+            align: 'center',
+            render: (_, record) => (
+                <Space>
+                    <Tag>₹ {record.wallet || 0}</Tag>
+                </Space>
+            )
         },
         {
             title: 'Status',

@@ -40,6 +40,7 @@ function Cms() {
     useEffect(() => { fetchSetting() }, [])
     return (
         <>
+            <title>Go Rabbit</title>
             <Header data={settingData} loading={loading} />
             <div className='p-2 m-2'>
                 <h1 className='text-3xl my-2'>{pageName}</h1>

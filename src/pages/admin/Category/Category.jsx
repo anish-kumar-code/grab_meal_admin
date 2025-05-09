@@ -60,19 +60,10 @@ function Category() {
         });
     };
 
-    if (loading) return <Spin size="large" fullscreen />;
+    // if (loading) return <Spin size="large" fullscreen />;
 
     return (
         <>
-            <div className='px-4'>
-                <Breadcrumb
-                    items={[
-                        { title: <Link to="/">Dashboard</Link> },
-                        { title: 'Category' }
-                    ]}
-                />
-            </div>
-
             <div className='lg:px-10 px-5 my-8 md:flex items-center gap-4 justify-between'>
                 <Input.Search
                     placeholder="Search by name"
@@ -91,6 +82,7 @@ function Category() {
             </div>
 
             <CategoryTable
+                loading={loading}
                 searchText={searchText}
                 data={categories}
                 onEdit={openModal}

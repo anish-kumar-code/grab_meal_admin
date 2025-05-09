@@ -24,14 +24,10 @@ const FoodProduct = () => {
     const [brand, setBrand] = useState([])
     const [vendor, setVendor] = useState([])
 
-    // const { serviceName } = useParams()
-    // const id = serviceName == 'food' ? FOOD_ID : GROCERY_ID
-
     const fetchProduct = async () => {
         setLoading(true);
         try {
             const productList = await getAllProducts();
-            // console.log(productList)
             setProducts(productList);
         } catch {
             message.error('Error fetching product list');
@@ -76,18 +72,10 @@ const FoodProduct = () => {
         });
     };
 
-    if (loading) return <Spin size="large" fullscreen />;
+    // if (loading) return <Spin size="large" fullscreen />;
 
     return (
         <>
-            <div className='px-4'>
-                <Breadcrumb
-                    items={[
-                        { title: <Link to="/">Dashboard</Link> },
-                        { title: "Food Products" },
-                    ]}
-                />
-            </div>
 
             <div className='lg:px-10 px-5 my-8 md:flex items-center gap-4 justify-between'>
                 <Input.Search
@@ -103,7 +91,7 @@ const FoodProduct = () => {
                     onClick={() => setIsModalOpen(true)}
                 >
                     {/* {serviceName == 'food' ? "Add Food Product" : "Add Grocery Product"} */}
-                    Add Food Product
+                    Add Product
                 </Button>
             </div>
 
@@ -115,6 +103,7 @@ const FoodProduct = () => {
                     setIsEditModalOpen(true);
                 }}
                 onDelete={handleDelete}
+                loading={loading}
             />
 
             <AddFoodProductModel

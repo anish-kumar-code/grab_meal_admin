@@ -35,18 +35,6 @@ function Profile() {
 
     return (
         <>
-            <div className='px-4'>
-                <Breadcrumb
-                    items={[
-                        {
-                            title: <Link to={'/'}>Dashboard</Link>,
-                        },
-                        {
-                            title: "Profile",
-                        }
-                    ]}
-                />
-            </div>
             <div className="p-6">
                 <Card className="max-w-3xl mx-auto">
                     <div className="flex flex-col items-center mb-8">

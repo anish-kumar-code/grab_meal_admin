@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, Form, message, Spin } from 'antd';
-import { getVendorProfile, updateAccountInfo, updateProfileInfo } from '../../../services/vendor/apiAuth';
+import { getVendorProfile, updateAccountInfo, updateDocumentInfo, updateProfileInfo } from '../../../services/vendor/apiAuth';
 import { useWatch } from 'antd/es/form/Form';
 
 import ProfileInfo from './components/ProfileInfo';
@@ -94,13 +94,16 @@ const Profile = () => {
       formData.append("accountNo", values.accountNo);
 
       // Append passbook file if uploaded
-      if (values.passbook && values.passbook.fileList) {
-        formData.append("passbook", values.passbook.fileList[0].originFileObj);
-        console.log(values.passbook.fileList[0].originFileObj)
+      // if (values.passbook && values.passbook.fileList) {
+      //   formData.append("passbook", values.passbook.fileList[0].originFileObj);
+      //   console.log(values.passbook.fileList[0].originFileObj)
+      // }
+      if (values.passbook?.length) {
+        formData.append("passbook", values.passbook[0].originFileObj);
       }
 
       const res = await updateAccountInfo(formData);
-      console.log(res)
+      // console.log(res)
       message.success(res.message);
     } catch (error) {
       console.log(error.message)
@@ -110,10 +113,36 @@ const Profile = () => {
     }
   };
 
+  const updateDocument = async (values) => {
+    setUpdateLoading(true)
+    try {
+      const formData = new FormData();
+      formData.append("panNo", values.panNo);
+      formData.append("gstNo", values.gstNo);
+      formData.append("foodLicense", values.foodLicense);
+      if (values.panImage?.length) {
+        formData.append("panImage", values.panImage[0].originFileObj);
+      }
+      if (values.gstImage?.length) {
+        formData.append("gstImage", values.gstImage[0].originFileObj);
+      }
+      if (values.foodImage?.length) {
+        formData.append("foodImage", values.foodImage[0].originFileObj);
+      }
+      const res = await updateDocumentInfo(formData);
+      console.log(res)
+      message.success(res.message);
+    } catch (error) {
+      message.error('Failed to update document');
+    }finally{
+      setUpdateLoading(false)
+    }
+  }
+
   const tabItems = [
     { label: 'Profile Info', key: '1', children: <ProfileInfo vendor={vendor} form={form} updateProfile={updateProfile} loading={updateLoading} /> },
     { label: 'Account Details', key: '2', children: <AccountInfo vendor={vendor} form={form} updateBankAccountDetails={updateBankAccountDetails} BASE_URL={BASE_URL} loading={updateLoading} /> },
-    { label: 'Documents', key: '3', children: <DocumentInfo vendor={vendor} BASE_URL={BASE_URL} /> },
+    { label: 'Documents', key: '3', children: <DocumentInfo vendor={vendor} form={form} updateDocument={updateDocument} BASE_URL={BASE_URL} loading={updateLoading} /> },
   ]
 
   if (loading) return <Spin size="large" fullscreen />;

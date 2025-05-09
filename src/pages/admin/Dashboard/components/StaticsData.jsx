@@ -1,47 +1,95 @@
-import React from 'react'
-import cat1 from '/svgs/category1.svg'
-import { Statistic } from 'antd';
+import React from 'react';
+import { Spin, Statistic } from 'antd';
 import CountUp from 'react-countup';
+import { motion } from 'motion/react';
+import { RiAdvertisementLine, RiUserLine, RiStoreLine, RiRestaurantLine, RiShoppingBasketLine, RiFolderLine, RiStackLine } from 'react-icons/ri';
 
-const staticData = [
-    { name: "Banner", image: "", count: 10, },
-    { name: "Category", image: "", count: 10, },
-    { name: "Sub Category", image: "", count: 30, },
-    { name: "Food", image: "", count: 100, },
-    { name: "Grocery", image: "", count: 200, },
-    { name: "Vendor", image: "", count: 50, },
-    { name: "User", image: "", count: 1500, },
-];
-
-function StaticsData() {
-
+function StaticsData({ data, loading }) {
     const formatter = value => <CountUp end={value} separator="," />;
 
+    const cardVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0 },
+    };
+
+    const staticData = [
+        { name: "Banner", icon: <RiAdvertisementLine />, count: data.banner, color: "#6366f1" },
+        { name: "Category", icon: <RiFolderLine />, count: data.category, color: "#10b981" },
+        { name: "Sub Category", icon: <RiStackLine />, count: data.subCategory, color: "#f59e0b" },
+        { name: "Food", icon: <RiRestaurantLine />, count: data.food, color: "#ef4444" },
+        { name: "Grocery", icon: <RiShoppingBasketLine />, count: data.grocery, color: "#8b5cf6" },
+        { name: "Vendor", icon: <RiStoreLine />, count: data.vendor, color: "#3b82f6" },
+        { name: "User", icon: <RiUserLine />, count: data.user, color: "#ec4899" },
+    ];
+
+    if (loading) return <Spin size='large' />
+
     return (
-        <>
-            <div className='flex gap-2 flex-wrap'>
-                {
-                    staticData.map((data) => (
-                        <div className='h-[100px] w-[120px] sm:w-[220px] rounded-2xl border-1 border-zinc-200 overflow-hidden p-5 flex items-center gap-5'>
-                            <img src={cat1} alt="" className='hidden sm:block' />
-                            <div>
-                                {/* <h1 className='text-3xl font-bold'>{data.count}</h1> */}
-                                <Statistic title={data.name} value={data.count} formatter={formatter} />
-                                {/* <p>{data.name}</p> */}
-                            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-4 p-4">
+            {staticData.map((data, index) => (
+                <motion.div
+                    key={data.name}
+                    variants={cardVariants}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ delay: index * 0.1 }}
+                    className="relative group overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300"
+                >
+                    <div
+                        className="absolute inset-0 opacity-10 transition-opacity duration-300 group-hover:opacity-20"
+                        style={{ backgroundColor: data.color }}
+                    />
+
+                    <div className="p-6 flex flex-col items-center">
+                        <div
+                            className="w-14 h-14 rounded-full flex items-center justify-center mb-4 text-2xl"
+                            style={{
+                                backgroundColor: `${data.color}20`,
+                                color: data.color
+                            }}
+                        >
+                            {data.icon}
                         </div>
-                    ))
-                }
-                {/* <div className='h-[100px] w-[220px] rounded-2xl border-1 border-zinc-200 overflow-hidden p-5 flex items-center gap-5'>
-                    <img src={cat1} alt="" />
-                    <div>
-                        <h1 className='text-5xl font-bold'>200</h1>
-                        <p>Total Orders</p>
+
+                        <Statistic
+                            title={<span className="text-gray-600 dark:text-gray-300">{data.name}</span>}
+                            value={data.count}
+                            formatter={formatter}
+                            valueStyle={{
+                                fontSize: '1.75rem',
+                                fontWeight: 700,
+                                color: data.color
+                            }}
+                            className="text-center"
+                        />
+
+                        <div
+                            className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r transition-all duration-500"
+                            style={{
+                                backgroundImage: `linear-gradient(to right, ${data.color}00, ${data.color}, ${data.color}00)`,
+                                opacity: 0.3
+                            }}
+                        />
                     </div>
-                </div> */}
+                </motion.div>
+            ))}
+
+            {/* Animated Background Card */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                {staticData.map((data) => (
+                    <div
+                        key={data.name}
+                        className="absolute w-48 h-48 rounded-full blur-3xl opacity-10 -z-1"
+                        style={{
+                            backgroundColor: data.color,
+                            top: `${Math.random() * 80}%`,
+                            left: `${Math.random() * 80}%`,
+                        }}
+                    />
+                ))}
             </div>
-        </>
-    )
+        </div>
+    );
 }
 
-export default StaticsData
+export default StaticsData;

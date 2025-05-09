@@ -141,14 +141,6 @@ function AddProduct() {
 
     return (
         <>
-            <div className='px-4 mb-4'>
-                <Breadcrumb
-                    items={[
-                        { title: <Link to="/">Vendor</Link> },
-                        { title: "Add Products" },
-                    ]}
-                />
-            </div>
 
             <Card>
                 <div className='flex justify-between mb-4'>

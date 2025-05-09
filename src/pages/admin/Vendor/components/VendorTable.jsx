@@ -9,26 +9,9 @@ import { Tooltip } from 'antd';
 import { IoStorefront } from 'react-icons/io5';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-const VendorTable = ({ searchText, onDelete }) => {
+const VendorTable = ({ data, searchText, onDelete, loading }) => {
     const navigate = useNavigate();
-    const [dataSource, setDataSource] = useState([]);
-    const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        setLoading(true)
-        const fetchVendor = async () => {
-            try {
-                const res = await getAllVendor()
-                setDataSource(res)
-                console.log(dataSource)
-            } catch (error) {
-                console.log(error)
-            } finally {
-                setLoading(false)
-            }
-        }
-        fetchVendor()
-    }, [])
 
     const columns = [
         {
@@ -48,12 +31,6 @@ const VendorTable = ({ searchText, onDelete }) => {
             key: 'name',
             align: "center"
         },
-        // {
-        //     title: 'Shop Name',
-        //     dataIndex: 'shop_name',
-        //     key: 'shop_name',
-        //     align: "center"
-        // },
         {
             title: 'User Name',
             dataIndex: 'userId',
@@ -72,19 +49,6 @@ const VendorTable = ({ searchText, onDelete }) => {
             key: 'email',
             align: "center"
         },
-        // {
-        //     title: 'Services',
-        //     dataIndex: 'service_id',
-        //     key: 'service_id',
-        //     align: "center",
-        //     render: (services) => (
-        //         <Space size={[0, 8]} wrap>
-        //             {services.map((service, index) => (
-        //                 <Tag color="blue" key={index}>{service.name}</Tag>
-        //             ))}
-        //         </Space>
-        //     )
-        // },
         {
             title: 'Approve',
             dataIndex: 'isApproved',
@@ -109,24 +73,23 @@ const VendorTable = ({ searchText, onDelete }) => {
             align: "right",
             render: (_, record) => (
                 <Space size="small">
-                    <Tooltip title="Products"><Button type="primary" icon={<IoStorefront />} onClick={() => navigate(`admin/vendor/${record.shop_name}-${record._id}/products`)}></Button></Tooltip>
+                    <Tooltip title="Shops"><Button type="primary" icon={<IoStorefront />} onClick={() => navigate(`/admin/vendor/shops/${record._id}`)}></Button></Tooltip>
                     <Tooltip title="Details"><Button type="primary" icon={<IoMdEye />} onClick={() => navigate(`/admin/vendor/${record._id}`)}></Button></Tooltip>
                 </Space>
             )
         }
     ];
 
-    const filtredData = dataSource.filter(item => item.owner_name?.toLowerCase().includes(searchText.toLowerCase()))
-
-    if (loading) return <Spin size="large" fullscreen />
+    const filtredData = data.filter(item => item.name?.toLowerCase().includes(searchText.toLowerCase()))
 
     return <Table
-        dataSource={dataSource}
+        dataSource={filtredData}
         columns={columns}
         rowKey="_id"
         scroll={{ x: true }}
         bordered={false}
         size='small'
+        loading={loading}
     />;
 }
 

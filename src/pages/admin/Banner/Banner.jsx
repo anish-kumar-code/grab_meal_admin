@@ -55,18 +55,6 @@ function MainBanner() {
 
     return (
         <>
-            <div className='px-4'>
-                <Breadcrumb
-                    items={[
-                        {
-                            title: <Link to={'/'}>Dashboard</Link>,
-                        },
-                        {
-                            title: "Banners",
-                        }
-                    ]}
-                />
-            </div>
             <div className='lg:px-10 px-5 my-8 md:flex items-center gap-4 justify-between'>
                 <Input.Search
                     placeholder="Search by title"

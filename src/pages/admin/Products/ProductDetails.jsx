@@ -44,20 +44,6 @@ const ProductDetails = () => {
 
     return (
         <div className="p-4">
-            <div className='px-4'>
-                <Breadcrumb
-                    items={slugLength == 2 ? ([
-                        { title: <Link to="/">Dashboard</Link> },
-                        { title: <Link to="/food-product">Product</Link> },
-                        { title: productName }
-                    ]) : ([
-                        { title: <Link to="/">Dashboard</Link> },
-                        { title: <Link to="/vendor">Vendors</Link> },
-                        { title: <Link onClick={() => navigate(-1)}>{shopName}</Link> },
-                        { title: productName }
-                    ])}
-                />
-            </div>
 
             <div className="lg:px-10 px-5 my-8">
                 <Button

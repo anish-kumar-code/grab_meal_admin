@@ -58,18 +58,10 @@ function SubCategory() {
         });
     };
 
-    if (loading) return <Spin size="large" fullscreen />;
+    // if (loading) return <Spin size="large" fullscreen />;
 
     return (
         <>
-            <div className='px-4'>
-                <Breadcrumb
-                    items={[
-                        { title: <Link to="/">Dashboard</Link> },
-                        { title: 'Sub-Category' },
-                    ]}
-                />
-            </div>
             <div className='lg:px-10 px-5 my-8 md:flex items-center gap-4 justify-between'>
                 <Input.Search
                     placeholder="Search here ..."
@@ -88,6 +80,7 @@ function SubCategory() {
             </div>
 
             <SubCategoryTable
+                loading={loading}
                 searchText={searchText}
                 data={subcategories}
                 onEdit={openModal}

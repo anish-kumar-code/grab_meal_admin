@@ -1,126 +1,85 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Card, Button, Spin, message, Input, Breadcrumb, Switch, Space } from 'antd';
-import { useParams, useNavigate, Link } from 'react-router';
+import { Table, Card, Button, Input, Breadcrumb, Switch, Space, Tooltip, Badge, Avatar } from 'antd';
+import { useNavigate, Link, useParams } from 'react-router';
 import { ArrowLeftOutlined, EyeOutlined } from '@ant-design/icons';
-import { getVendorProduct } from '@services/apiVendor';
-import { updateProductStatus } from '@services/apiProduct';
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+import { getVendorShop } from '../../../../services/apiVendor';
+
+const BASE_URL = import.meta.env.VITE_BASE_URL || '';
+
+
 
 const VendorProducts = () => {
-    const {vendorSlug} = useParams()
-    const id = vendorSlug.split('-').pop();
-    const shopName = vendorSlug.replace(`-${id}`, '')
+    const { id } = useParams();
     const navigate = useNavigate();
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
+
+    // const [products, setProducts] = useState([]);
     const [searchText, setSearchText] = useState('');
+    const [shops, setShops] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    const filteredProducts = products.filter(product =>
-        product.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        product.categoryId.name.toLowerCase().includes(searchText.toLowerCase())
-    );
+    useEffect(() => {
+        fetchAllShop(id);
+    }, [])
 
-    const fetchVendorProduct = async () => {
+    const fetchAllShop = async (id) => {
+        setLoading(true)
         try {
-            const res = await getVendorProduct(id);
-            setProducts(res)
+            const res = await getVendorShop(id)
+            setShops(res)
         } catch (error) {
-            message.error('Error fetching vendor product');
+            message.error("Something went wrong!")
         } finally {
             setLoading(false)
         }
     }
 
-    useEffect(() => {
-        fetchVendorProduct()
-    }, [])
+    const filteredShops = shops.filter(shop =>
+        shop.name.toLowerCase().includes(searchText.toLowerCase())
+    );
 
     const columns = [
         {
-            title: 'Image',
-            key: 'image',
-            align: "center",
-            render: (_, { primary_image }) => (
-                <img
-                    src={`${BASE_URL}/${primary_image}` || '?'}
-                    alt="Product"
-                    style={{ width: 50, height: 50, objectFit: 'cover' }}
-                    loading='lazy'
-                />
-            )
-        },
-        {
-            title: 'Name',
+            title: 'Shop Name',
             dataIndex: 'name',
             key: 'name',
-            align: "center"
-        },
-        {
-            title: 'Category',
-            dataIndex: 'category',
-            key: 'category',
-            align: "center",
-            render: (_, record) => (<>{record.categoryId.name}</>)
-        },
-        {
-            title: 'Subcategory',
-            dataIndex: 'subcategory',
-            key: 'subcategory',
-            align: "center",
-            render: (_, record) => (<>{record.subCategoryId.name}</>)
-        },
-        {
-            title: 'Price',
-            dataIndex: 'price',
-            key: 'price',
-            align: "center",
-            render: (_, record) => (<>₹{record.sellingPrice} <del>{record.mrp}</del></>)
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            align: "center",
-            render: (_, record) => (
-                <Switch
-                    defaultChecked={record?.status === "active"}
-                    onChange={(checked) => updateProductStatus(record._id, checked)}
-                />
+            render: (_, { shopImage, name }) => (
+                <>
+                    <div>
+                        <Avatar size={40}>
+                            {/* {image || '?'} */}
+                            {shopImage ? <img src={`${BASE_URL}/${shopImage}`} alt={name} /> : <FaUserTie />}
+                        </Avatar> &nbsp;
+                        {name}
+                    </div>
+                </>
             )
         },
         {
-            title: 'Action',
-            key: 'action',
-            align: "center",
-            render: (_, record) => (
-                <Space>
-                    <Button
-                        type="primary"
-                        icon={<EyeOutlined />}
-                        onClick={() => navigate(`/products/${shopName}-${record.name}-${record._id}`)}
-                    />
-                </Space>
-            )
-        }
+            title: 'Service',
+            dataIndex: 'service',
+            key: 'service',
+            render: (_, record) => (record.serviceId.name)
+        },
+        {
+            title: 'Type',
+            dataIndex: 'type',
+            key: 'type',
+            render: (_, record) => (record.shopType)
+        },
+        {
+            title: 'Products',
+            dataIndex: 'products',
+            key: 'products',
+            render: (_, record) => (<Tooltip title="All Products" className='hover:cursor-pointer'><Badge count={record.productCount} showZero color="#52c41a" overflowCount={999} /></Tooltip>)
+        },
     ];
-
-    if (loading) return <Spin size="large" fullscreen />;
 
     return (
         <div className="p-4">
-            <div className='px-4'>
-                <Breadcrumb
-                    items={[
-                        { title: <Link to="/">Dashboard</Link> },
-                        { title: <Link to="/vendor">Vendors</Link> },
-                        { title: shopName }
-                    ]}
-                />
-            </div>
 
             <div className='lg:px-10 px-5 my-8 md:flex items-center gap-4 justify-between'>
                 <Input.Search
-                    placeholder="Search by name or category"
+                    placeholder="Search by name"
                     onChange={(e) => setSearchText(e.target.value)}
                     style={{ maxWidth: 300, borderRadius: '6px' }}
                     size="large"
@@ -128,15 +87,15 @@ const VendorProducts = () => {
                 <Button
                     type="text"
                     icon={<ArrowLeftOutlined />}
-                    onClick={() => navigate('/vendor')}
+                    onClick={() => navigate(-1)}
                 >
                     Back to Vendors
                 </Button>
             </div>
 
-            <Card title={`${shopName} Products`}>
-                <Table
-                    dataSource={filteredProducts}
+            <Card title={`Shop list`}>
+                <Table loading={loading}
+                    dataSource={filteredShops}
                     columns={columns}
                     rowKey="_id"
                     pagination={{ pageSize: 10 }}

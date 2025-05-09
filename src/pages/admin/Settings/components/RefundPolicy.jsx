@@ -9,6 +9,7 @@ function RefundPolicy() {
     const [data, setdata] = useState("")
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(true);
+    const [updateLoading, setUpdateLoading] = useState(false);
 
     const fetchSetting = async () => {
         try {
@@ -25,6 +26,7 @@ function RefundPolicy() {
     useEffect(() => { fetchSetting() }, [])
 
     const onFinish = async () => {
+        setUpdateLoading(true)
         const fromData = {
             refundPolicy: refundPolicy
         }
@@ -34,36 +36,25 @@ function RefundPolicy() {
             message.success('Refund policy updated');
         } catch (error) {
             message.error('Error updating refund policy');
+        }finally{
+            setUpdateLoading(false)
         }
     };
 
     if (loading) return <Spin size="large" fullscreen />;
     return (
         <>
-            <div className='px-4'>
-                <Breadcrumb
-                    items={[
-                        {
-                            title: <Link to={'/'}>Dashboard</Link>,
-                        },
-                        {
-                            title: "Refund Policy",
-                        }
-                    ]}
-                />
-            </div>
             <div className="p-6">
                 <h2 className="text-2xl font-bold mb-6">Refund Policy</h2>
                 <Form
                     form={form}
                     layout="vertical"
                     onFinish={onFinish}
-                    className="max-w-2xl"
                 >
-                    <TextArea rows={5} placeholder="Enter Refund Policy here ..." value={refundPolicy} onChange={(e) => setRefundPolicy(e.target.value)} required />
+                    <TextArea autoSize={{minRows:20}} placeholder="Enter Refund Policy here ..." value={refundPolicy} onChange={(e) => setRefundPolicy(e.target.value)} required />
 
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" size="large" className='mt-4'>
+                        <Button type="primary" htmlType="submit" size="large" className='mt-4' loading={updateLoading}>
                             Save Changes
                         </Button>
                     </Form.Item>

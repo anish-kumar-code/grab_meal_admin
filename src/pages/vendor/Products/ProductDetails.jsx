@@ -32,16 +32,6 @@ const ProductDetails = () => {
 
     return (
         <div className="p-4">
-            {/* <div className='px-4'>
-                <Breadcrumb
-                    items={([
-                        { title: <Link to="/">Dashboard</Link> },
-                        { title: <Link to="/vendor">{product.vendorId.name}</Link> },
-                        { title: <Link onClick={() => navigate(-1)}>{product.shopId.name}</Link> },
-                        { title: <p>{product.name}</p> }
-                    ])}
-                />
-            </div> */}
 
             <div className="lg:px-10 px-5 my-8">
                 <Button

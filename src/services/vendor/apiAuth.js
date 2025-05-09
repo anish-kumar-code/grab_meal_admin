@@ -33,9 +33,28 @@ export const updateProfileInfo = async(data)=>{
 }
 
 export const updateAccountInfo = async(formData)=>{
-    console.log(formData)
+    // console.log(formData)
     try {
-        const res = await axiosInstance.patch("/api/vendor/update/account", formData);
+        const res = await axiosInstance.patch("/api/vendor/update/account", formData,{
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        });
+        return res.data;
+    } catch (error) {
+        console.log(error.message)
+        message.error("Something went wrong")
+    }
+}
+
+export const updateDocumentInfo = async(formData)=>{
+    // console.log(formData)
+    try {
+        const res = await axiosInstance.patch("/api/vendor/update/document", formData,{
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            }
+        });
         return res.data;
     } catch (error) {
         console.log(error.message)

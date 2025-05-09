@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout, Avatar, Menu } from 'antd';
 import { useNavigate, useLocation } from 'react-router';
-import { LuLayoutDashboard } from "react-icons/lu";
+import { LuBriefcaseBusiness, LuLayoutDashboard } from "react-icons/lu";
 import { FaRegUser, FaStore } from 'react-icons/fa';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { MdLogout } from 'react-icons/md';
@@ -48,6 +48,23 @@ function VendorSidebar({ collapsed }) {
             icon: <FaStore style={{ fontSize: "18px" }} />,
             label: 'My Shops',
             onClick: () => navigate('/vendor/shop'),
+        },
+        {
+            key: 'business',
+            icon: <LuBriefcaseBusiness size={18} />,
+            label: 'Business',
+            children: [
+                {
+                    key: 'wallet',
+                    label: 'Wallet',
+                    onClick: () => navigate('/vendor/wallet')
+                },
+                {
+                    key: 'wallet_history',
+                    label: 'Wallet History',
+                    onClick: () => navigate('/vendor/wallet/history')
+                }
+            ]
         },
         {
             key: 'profile',

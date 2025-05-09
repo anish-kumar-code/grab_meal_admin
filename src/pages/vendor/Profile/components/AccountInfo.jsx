@@ -21,11 +21,6 @@ const AccountInfo = ({ vendor, form, updateBankAccountDetails, BASE_URL, loading
         }
     }, [vendor, form, BASE_URL]);
 
-    const handleRemoveImage = () => {
-        setPreviewPassbook(null);
-        form.setFieldsValue({ passbook: [] }); // reset upload
-    };
-
     return (
         <Form form={form} layout="vertical" onFinish={updateBankAccountDetails}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -77,9 +72,6 @@ const AccountInfo = ({ vendor, form, updateBankAccountDetails, BASE_URL, loading
                         alt="Passbook"
                         className="rounded shadow max-h-40 object-contain mb-2"
                     />
-                    <Button danger icon={<DeleteOutlined />} onClick={handleRemoveImage}>
-                        Remove Image
-                    </Button>
                 </div>
             ) : (
                 <Form.Item

@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router';
 import { updateProductStatus } from '@services/apiProduct';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-function FoodProductTable({ searchText, data, onEdit, onDelete }) {
+function FoodProductTable({ searchText, data, onEdit, onDelete, loading }) {
 
     const navigate = useNavigate()
 
@@ -81,18 +81,18 @@ function FoodProductTable({ searchText, data, onEdit, onDelete }) {
                 <Switch defaultChecked={record?.status === "active"} onChange={(checked) => updateProductStatus(record._id, checked)} />
             )
         },
-        {
-            title: 'Action',
-            key: 'action',
-            align: "right",
-            render: (_, record) => (
-                <Space size="small">
-                    <Tooltip title="Details"><Button type="primary" icon={<EyeOutlined />} onClick={() => navigate(`/products/${record.name}-${record._id}`)} /></Tooltip>
-                    {/* <Tooltip title="Edit"><Button type="primary" icon={<FaEdit />} onClick={() => onEdit(record)}></Button></Tooltip> */}
-                    {/* <Tooltip title="Delete"><Button type="primary" danger icon={<FaTrash />} onClick={() => onDelete(record)}></Button></Tooltip> */}
-                </Space>
-            )
-        }
+        // {
+        //     title: 'Action',
+        //     key: 'action',
+        //     align: "right",
+        //     render: (_, record) => (
+        //         <Space size="small">
+        //             <Tooltip title="Details"><Button type="primary" icon={<EyeOutlined />} onClick={() => navigate(`/products/${record.name}-${record._id}`)} /></Tooltip>
+        //             <Tooltip title="Edit"><Button type="primary" icon={<FaEdit />} onClick={() => onEdit(record)}></Button></Tooltip>
+        //             <Tooltip title="Delete"><Button type="primary" danger icon={<FaTrash />} onClick={() => onDelete(record)}></Button></Tooltip>
+        //         </Space>
+        //     )
+        // }
     ];
 
     return (
@@ -104,6 +104,7 @@ function FoodProductTable({ searchText, data, onEdit, onDelete }) {
                 scroll={{ x: true }}
                 bordered={false}
                 size='small'
+                loading={loading}
             />
         </>
     )

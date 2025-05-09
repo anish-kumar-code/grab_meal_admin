@@ -3,7 +3,7 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 import { updateStatus } from '../../../../services/apiCategory';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-const SubCategoryTable = ({ searchText, data, onEdit, onDelete }) => {
+const SubCategoryTable = ({ searchText, data, onEdit, onDelete, loading }) => {
     const columns = [
         {
             title: 'Image',
@@ -67,6 +67,7 @@ const SubCategoryTable = ({ searchText, data, onEdit, onDelete }) => {
         scroll={{ x: true }}
         bordered={false}
         size='small'
+        loading={loading}
     />;
 }
 
