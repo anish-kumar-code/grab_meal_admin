@@ -1,9 +1,8 @@
-import { Avatar, Button, Space, Spin, Switch, Table, Tag } from 'antd'
+import { Avatar, Badge, Button, Space, Spin, Switch, Table, Tag } from 'antd'
 import { FaTrash } from 'react-icons/fa';
 import { IoMdEye } from 'react-icons/io';
 import { useNavigate } from 'react-router';
-import { useEffect, useState } from 'react';
-import { getAllVendor, vendorApprove, vendorBlock } from '@services/apiVendor';
+import { vendorApprove, vendorBlock } from '@services/apiVendor';
 import { FaUserTie } from 'react-icons/fa6';
 import { Tooltip } from 'antd';
 import { IoStorefront } from 'react-icons/io5';
@@ -51,20 +50,20 @@ const VendorTable = ({ data, searchText, onDelete, loading }) => {
         },
         {
             title: 'Approve',
-            dataIndex: 'isApproved',
-            key: 'isApproved',
+            dataIndex: 'status',
+            key: 'status',
             align: "center",
             render: (_, record) => (
-                <Switch defaultChecked={record.isApproved} onChange={(checked) => vendorApprove(record._id, checked)} />
+                <Switch defaultChecked={record.status} onChange={(checked) => vendorApprove(record._id, checked)} />
             )
         },
         {
             title: 'Block',
-            dataIndex: 'isBlock',
-            key: 'isBlock',
+            dataIndex: 'isBlocked',
+            key: 'isBlocked',
             align: "center",
             render: (_, record) => (
-                <Switch defaultChecked={record.isBlock} onChange={(checked) => vendorBlock(record._id, checked)} />
+                <Switch defaultChecked={record.isBlocked} onChange={(checked) => vendorBlock(record._id, checked)} />
             )
         },
         {
@@ -73,8 +72,9 @@ const VendorTable = ({ data, searchText, onDelete, loading }) => {
             align: "right",
             render: (_, record) => (
                 <Space size="small">
-                    <Tooltip title="Shops"><Button type="primary" icon={<IoStorefront />} onClick={() => navigate(`/admin/vendor/shops/${record._id}`)}></Button></Tooltip>
+                    <Tooltip title="Shops"><Badge count={record.shopCount} showZero size='small' ><Button type="primary" icon={<IoStorefront />} onClick={() => navigate(`/admin/vendor/shops/${record._id}`)}></Button></Badge></Tooltip>
                     <Tooltip title="Details"><Button type="primary" icon={<IoMdEye />} onClick={() => navigate(`/admin/vendor/${record._id}`)}></Button></Tooltip>
+                    <Tooltip title="Delete"> <Button type="primary" danger icon={<FaTrash />} onClick={() => onDelete(record)} /></Tooltip>
                 </Space>
             )
         }

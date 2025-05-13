@@ -22,7 +22,7 @@ function VendorLogin() {
             }
         } catch (error) {
             console.error('Login error:', error);
-            message.error('Something went wrong.');
+            message.error(error.response.data.message);
         } finally {
             setLoading(false);
         }

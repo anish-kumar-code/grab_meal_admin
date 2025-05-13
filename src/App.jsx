@@ -20,6 +20,7 @@ import GroceryProduct from './pages/admin/Grocery-Product/GroceryProduct'
 import Login from './pages/admin/Auth/Login'
 import AdminPrivateRoute from './components/AdminPrivateRoute'
 import ProductDetails from './pages/admin/Products/ProductDetails'
+import PaymentRequest from './pages/admin/Payment-Request/PaymentRequest'
 
 // vendor
 import VendorPrivateRoute from './components/VendorPrivateRoute';
@@ -72,6 +73,8 @@ function App() {
           <Route path='shop' element={<Shop />} />
           <Route path='order' element={<Order />} />
           <Route path="order/:id" element={<OrderDetailsPage />} />
+          <Route path="request/vendor" element={<PaymentRequest />} />
+          <Route path="request/driver" element={<PaymentRequest />} />
           <Route path='user' element={<User />} />
           <Route path='settings' element={<Settings />} />
           <Route path='settings/profile' element={<Profile />} />

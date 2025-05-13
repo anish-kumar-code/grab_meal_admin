@@ -20,10 +20,12 @@ const siderStyle = {
     scrollbarGutter: 'stable'
 };
 
-function VendorSidebar({ collapsed }) {
+function VendorSidebar({ collapsed, settingData }) {
     const navigate = useNavigate();
     const location = useLocation();
     const { vendorLogout } = useAuth();
+
+    const BASE_URL = import.meta.env.VITE_BASE_URL;
 
     // 🔥 Determine which menu item to highlight
     const getCurrentMenuKey = (path) => {
@@ -105,7 +107,7 @@ function VendorSidebar({ collapsed }) {
                     size={collapsed ? 32 : 64}
                     src={
                         <img
-                            src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg"
+                            src={`${BASE_URL}/${settingData.logo}`}
                             alt="avatar"
                         />
                     }

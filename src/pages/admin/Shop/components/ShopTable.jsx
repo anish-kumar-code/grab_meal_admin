@@ -1,10 +1,10 @@
 import { Avatar, Button, Space, Table, Tag, Tooltip } from 'antd';
 import { IoMdEye } from 'react-icons/io';
 import { useNavigate } from 'react-router';
-import { FaEdit, FaStore } from 'react-icons/fa';
+import { FaEdit, FaStore, FaTrash } from 'react-icons/fa';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-const ShopTable = ({ data, searchText, onDelete, loading, handleWalletEdit }) => {
+const ShopTable = ({ data, searchText, onDelete, loading, }) => {
     const navigate = useNavigate();
 
     const columns = [
@@ -58,12 +58,12 @@ const ShopTable = ({ data, searchText, onDelete, loading, handleWalletEdit }) =>
             align: 'center',
             render: (_, record) => record.vendorId?.name || 'N/A'
         },
-        {
-            title: 'Rating',
-            dataIndex: 'rating',
-            key: 'rating',
-            align: 'center'
-        },
+        // {
+        //     title: 'Rating',
+        //     dataIndex: 'rating',
+        //     key: 'rating',
+        //     align: 'center'
+        // },
         {
             title: 'Phone',
             dataIndex: 'phone',
@@ -83,8 +83,7 @@ const ShopTable = ({ data, searchText, onDelete, loading, handleWalletEdit }) =>
             align: 'center',
             render: (_, record) => (
                 <Space>
-                    <Tag>₹{record.wallet || 0}</Tag>
-                    <button type="link" onClick={() => handleWalletEdit(record)} className='cursor-pointer'><FaEdit/></button>
+                    <Tag>₹{record.wallet_balance || 0}</Tag>
                 </Space>
             )
         },
@@ -97,22 +96,17 @@ const ShopTable = ({ data, searchText, onDelete, loading, handleWalletEdit }) =>
                 <Tag color={status === 'active' ? 'blue' : 'gray'}>{status}</Tag>
             )
         },
-        // {
-        //     title: 'Action',
-        //     key: 'action',
-        //     align: 'right',
-        //     render: (_, record) => (
-        //         <Space size="small">
-        //             <Tooltip title="Details">
-        //                 <Button
-        //                     type="primary"
-        //                     icon={<IoMdEye />}
-        //                     onClick={() => navigate(`/admin/shop/${record._id}`)} 
-        //                 />
-        //             </Tooltip>
-        //         </Space>
-        //     )
-        // }
+        {
+            title: 'Action',
+            key: 'action',
+            align: 'right',
+            render: (_, record) => (
+                <Space size="small">
+                    <Tooltip title="Details"> <Button type="primary" icon={<IoMdEye />} onClick={() => navigate(`/admin/shop/${record._id}`)} /></Tooltip>
+                    <Tooltip title="Delete"> <Button type="primary" danger icon={<FaTrash />} onClick={() => onDelete(record)} /></Tooltip>
+                </Space>
+            )
+        }
     ];
 
     const filteredData = data.filter(item =>

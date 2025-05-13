@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router';
 import { FaEdit, FaPlus } from 'react-icons/fa';
 import { IoStorefront } from 'react-icons/io5';
 
-function ShopTable({ shops, handleEdit }) {
+function ShopTable({ shops, handleEdit, loading }) {
 
     const navigate = useNavigate()
     // console.log(shops)
@@ -58,7 +58,7 @@ function ShopTable({ shops, handleEdit }) {
             align: 'center',
             render: (_, record) => (
                 <Space>
-                    <Tag>₹ {record.wallet || 0}</Tag>
+                    <Tag>₹ {record.wallet_balance}</Tag>
                 </Space>
             )
         },
@@ -93,6 +93,7 @@ function ShopTable({ shops, handleEdit }) {
                 dataSource={shops}
                 rowKey="_id"
                 pagination={shops?.length > 10 ? { pageSize: 10 } : false}
+                loading={loading}
             />
         </Card>
     );

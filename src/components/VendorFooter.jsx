@@ -3,10 +3,10 @@ import { Layout } from 'antd';
 
 const { Footer } = Layout;
 
-const VendorFooter = () => {
+const VendorFooter = ({settingData}) => {
     return (
         <Footer className="text-center text-sm text-gray-400">
-            Go Rabbit Vendor Panel ©{new Date().getFullYear()}
+            {settingData.brandName} Vendor Panel ©{new Date().getFullYear()}
         </Footer>
     );
 };

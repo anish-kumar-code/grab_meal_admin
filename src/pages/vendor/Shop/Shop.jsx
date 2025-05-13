@@ -16,6 +16,7 @@ function Shop() {
     const showModal = () => setIsModalOpen(true);
     const handleCancel = () => setIsModalOpen(false);
     const handleOk = () => { setIsModalOpen(false); fetchAllShop(); };
+
     const handleEdit = (shop) => {
         setEditingShop(shop);
         setIsEditModalOpen(true);
@@ -39,7 +40,7 @@ function Shop() {
         }
     }
 
-    if (loading) return <Spin size="large" fullscreen />
+    // if (loading) return <Spin size="large" fullscreen />
 
     return (
         <div className="min-h-screen">
@@ -56,7 +57,7 @@ function Shop() {
                     </Button>
                 </div>
 
-                <ShopTable shops={shops} handleEdit={handleEdit} />
+                <ShopTable shops={shops} handleEdit={handleEdit} loading={loading}/>
 
                 <AddShopModel
                     isModalOpen={isModalOpen}

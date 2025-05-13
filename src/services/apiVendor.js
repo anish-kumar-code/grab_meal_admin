@@ -58,3 +58,13 @@ export const vendorApprove = async (id, status) => {
         message.error('vendor status not update');
     }
 }
+
+export const deleteVendor = async(vendorId)=>{
+    console.log(vendorId)
+    try {
+        const response = await axiosInstance.delete(`/api/admin/vendor/delete/${vendorId}`);
+        return response.data.data;
+    } catch (error) {
+        message.error('Error deleting vendor');
+    }
+}

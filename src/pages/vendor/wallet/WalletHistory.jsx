@@ -1,120 +1,112 @@
-import React from 'react';
-import { Card, Table, Tag, Typography } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Card, Spin, Table, Tag, Typography, message } from 'antd';
+import { getWallet, getWalletHistory } from '../../../services/vendor/apiWallet';
 
 const { Title } = Typography;
 
 const WalletHistory = () => {
-    const balance = 20000;
+    const [wallet, setWallet] = useState(0);
+    const [walletHistoryData, setWalletHistoryData] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    const transactions = [
-        {
-            _id: 'txn1',
-            vendor_id: 'vendor001',
-            type: 'request',
-            status: 'pending',
-            amount: 5000,
-            requestedAt: '2025-05-01T10:00:00Z',
-            note: 'Requested by vendor',
-        },
-        {
-            _id: 'txn2',
-            vendor_id: 'vendor001',
-            type: 'settled',
-            status: 'settled',
-            amount: 3000,
-            requestedAt: '2025-04-25T12:00:00Z',
-            settledAt: '2025-04-28T15:00:00Z',
-            note: 'Settled manually by admin',
-        },
-        {
-            _id: 'txn3',
-            vendor_id: 'vendor001',
-            type: 'auto-settled',
-            status: 'auto-settled',
-            amount: 2000,
-            requestedAt: '2025-04-15T11:00:00Z',
-            settledAt: '2025-04-22T11:00:00Z',
-            note: 'Auto-settled after 7 days',
-        },
-        {
-            _id: 'txn4',
-            vendor_id: 'vendor001',
-            type: 'request',
-            status: 'rejected',
-            amount: 4000,
-            requestedAt: '2025-04-10T09:00:00Z',
-            settledAt: '2025-04-11T10:00:00Z',
-            note: 'Rejected due to invalid account info',
-        },
-    ];
+    useEffect(() => {
+        fetchWalletAndHistory();
+    }, []);
+
+    const convertDate = (date) => {
+        return new Date(date).toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+            timeZone: "Asia/Kolkata",
+        });
+    };
+
+    const fetchWalletAndHistory = async () => {
+        setLoading(true);
+        try {
+            const walletRes = await getWallet();
+            setWallet(walletRes.wallet.wallet_balance);
+
+            const historyRes = await getWalletHistory();
+            setWalletHistoryData(historyRes.data);
+        } catch (error) {
+            console.log(error)
+            message.error("Failed to fetch wallet data");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const columns = [
         {
             title: 'Date',
             dataIndex: 'requestedAt',
             key: 'date',
-            render: (date) => new Date(date).toLocaleDateString(),
+            render: (_, record) => convertDate(record?.createdAt),
         },
         {
             title: 'Amount',
             dataIndex: 'amount',
             key: 'amount',
-            render: (amount) => `₹${amount}`,
+            render: (amount) => `₹ ${amount}`,
+        },
+        {
+            title: 'Remaing Amount',
+            dataIndex: 'balance_after_action',
+            key: 'balance_after_action',
+            render: (balance_after_action) => `₹ ${balance_after_action}`,
         },
         {
             title: 'Type',
-            dataIndex: 'type',
-            key: 'type',
-            render: (type) => (
-                <Tag color={
-                    type === 'request' ? 'blue' :
-                        type === 'settled' ? 'green' :
-                            type === 'auto-settled' ? 'gold' :
-                                'red'
-                }>
-                    {type.toUpperCase()}
+            dataIndex: 'action',
+            key: 'action',
+            render: (action) => (
+                <Tag color={getTagColor(action)}>
+                    {action}
                 </Tag>
             )
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            render: (status) => (
-                <Tag color={
-                    status === 'pending' ? 'orange' :
-                        status === 'settled' ? 'green' :
-                            status === 'auto-settled' ? 'gold' :
-                                'red'
-                }>
-                    {status.toUpperCase()}
-                </Tag>
-            )
-        },
-        {
-            title: 'Settled Date',
-            dataIndex: 'settledAt',
-            key: 'settledAt',
-            render: (date) => date ? new Date(date).toLocaleDateString() : '—',
         },
         {
             title: 'Note',
-            dataIndex: 'note',
-            key: 'note',
+            dataIndex: 'description',
+            key: 'description',
         }
     ];
+
+    const getTagColor = (action) => {
+        switch (action) {
+            case 'credit':
+                return 'green';
+            case 'debit':
+                return 'red';
+            case 'commission':
+                return 'purple';
+            case 'withdrawal':
+                return 'orange';
+            case 'settlement':
+                return 'blue';
+            default:
+                return 'default';
+        }
+    };
 
     return (
         <div className="p-4">
             <Title level={3}>Vendor Wallet History</Title>
-            <Card className="mb-4">
-                <Title level={5}>Current Wallet Balance: ₹{balance}</Title>
+
+            <Card className="mb-4 shadow-sm">
+                <Title level={5}>Current Wallet Balance: ₹ {loading ? <Spin size='small' /> : wallet}</Title>
             </Card>
+
             <Table
                 columns={columns}
-                dataSource={transactions}
+                dataSource={walletHistoryData}
                 rowKey="_id"
-                pagination={{ pageSize: 5 }}
+                loading={loading}
+                pagination={{ pageSize: 10 }}
+                bordered
+                className='mt-3'
             />
         </div>
     );

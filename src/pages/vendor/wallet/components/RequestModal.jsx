@@ -1,83 +1,98 @@
-import React from 'react';
-import { Modal, Select, Button, Input, message } from 'antd';
+import React, { useMemo, useState } from 'react';
+import { Modal, Button, Input, message as antdMsg } from 'antd';
+import { createWithdrawRequest } from '../../../../services/vendor/apiWallet';
 
-const { Option } = Select;
+export default function RequestModal({ modalVisible, onClose, wallet, fetchWalletRequest }) {
+    const [amount, setAmount] = useState('');
+    const [requestMsg, setRequestMsg] = useState('');
+    const [pct, setPct] = useState(null);
+    const [loading, setLoading] = useState(false);
 
-const RequestModal = ({
-    modalVisible,
-    setModalVisible,
-    shopWallets,
-    totalBalance,
-    selectedShop,
-    setSelectedShop,
-    withdrawAmount,
-    setWithdrawAmount,
-    selectedPercent,
-    setSelectedPercent,
-    handleRequestPayment,
-}) => {
-    const handlePercentageClick = (percent) => {
-        const selectedBalance = shopWallets.reduce((sum, shop) => sum + shop.balance, 0);
-        const amount = Math.floor((selectedBalance * percent) / 100);
-        setWithdrawAmount(amount.toString());
-        setSelectedPercent(percent);
+    const remaining = useMemo(() => wallet - (+amount || 0), [amount, wallet]);
+    const presets = [10, 25, 50];
+
+    const trySubmit = async () => {
+        const num = +amount;
+        if (!num || num <= 0) return antdMsg.error('Enter a valid amount');
+        if (remaining < 0) return antdMsg.error('Insufficient balance');
+
+        const data = {
+            amount_requested: num,
+            message: requestMsg,
+        }
+
+        setLoading(true)
+        try {
+            await createWithdrawRequest(data)
+            antdMsg.success(`₹${num} request raised!`);
+            onClose();
+            setAmount('');
+            setPct(null);
+            setRequestMsg('');
+            fetchWalletRequest?.();
+        } catch {
+            antdMsg.error('Something went wrong');
+        }finally {
+            setLoading(false); 
+        }
     };
-
-    const selectedBalance = shopWallets.reduce((sum, shop) => sum + shop.balance, 0);
 
     return (
         <Modal
             title="Request Payment"
             open={modalVisible}
-            onOk={handleRequestPayment}
+            onOk={trySubmit}
             onCancel={() => {
-                setModalVisible(false);
-                setWithdrawAmount('');
-                setSelectedPercent(null);
+                onClose();
+                setAmount(''); setPct(null); setRequestMsg('');
             }}
             okText="Raise Request"
+            okButtonProps={{ disabled: !amount || +amount <= 0 || remaining < 0, loading: loading }}
         >
-            <p className="font-medium text-base">Total Wallet Balance: ₹{totalBalance}</p>
+            <p>Total Balance: ₹{wallet}</p>
 
-            <div className="mt-4 space-y-2">
+            <div className="space-y-3 mt-4">
                 <div className="flex gap-2">
-                    {[10, 25, 50].map((percent) => (
+                    {presets.map(p => (
                         <Button
-                            key={percent}
-                            type={selectedPercent === percent ? 'primary' : 'default'}
-                            onClick={() => handlePercentageClick(percent)}
+                            key={p}
+                            type={pct === p ? 'primary' : 'default'}
+                            onClick={() => {
+                                setAmount(Math.floor((wallet * p) / 100).toString());
+                                setPct(p);
+                            }}
                         >
-                            {percent}%
+                            {p}%
                         </Button>
                     ))}
                 </div>
 
                 <Input
-                    type="number"
+                    value={amount}
+                    onChange={e => { setAmount(e.target.value.replace(/\D/g, '')); setPct(null); }}
                     placeholder="Enter amount"
-                    value={withdrawAmount}
-                    onChange={(e) => {
-                        setWithdrawAmount(e.target.value);
-                        setSelectedPercent(null);
-                    }}
-                    className="w-full"
                 />
 
-                {withdrawAmount && (
-                    <div className="text-gray-600 text-sm">
-                        Remaining Balance: ₹{selectedBalance - parseInt(withdrawAmount || 0)}
+                <div className='mt-4'>
+                    <p>Enter message</p>
+                    <Input.TextArea
+                        rows={4}
+                        placeholder="Optional message"
+                        maxLength={150}
+                        value={requestMsg}
+                        onChange={e => setRequestMsg(e.target.value)}
+                    />
+                </div>
+
+                {amount && (
+                    <div className={`text-sm ${remaining < 0 ? 'text-red-600' : 'text-gray-600'}`}>
+                        {remaining < 0 ? '⚠️ Insufficient balance' : `Remaining: ₹${remaining}`}
                     </div>
                 )}
 
-                <div className="text-yellow-600 text-sm mt-2">
-                    ⚠️ You can withdraw payment only one time in a week.
-                </div>
-                <div className="text-blue-600 text-sm">
-                    ⏳ Your payment will be cleared after 7 days.
-                </div>
+                <div className="text-yellow-600 text-sm">⚠️ Only one withdrawal per week.</div>
+                {/* <div className="text-blue-600 text-sm">⏳ Processing takes 7 days.</div> */}
             </div>
         </Modal>
     );
-};
-
-export default RequestModal;
+}

@@ -1,18 +1,51 @@
-import React, { useState } from 'react';
-import { Breadcrumb, Layout, theme } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Breadcrumb, Layout, message, theme } from 'antd';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 import VendorSidebar from '../components/VendorSidebar';
 import VendorHeader from '../components/VendorHeader';
 import VendorFooter from '../components/VendorFooter';
+import { getAllSettings } from '../services/apiSettings';
+import { getVendorProfile } from '../services/vendor/apiAuth';
 
 const { Content } = Layout;
 
 const VendorLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const { token: { colorBgContainer, borderRadiusLG } } = theme.useToken();
+  const [settingData, setSettingData] = useState({})
+  const [vendor, setVendor] = useState({})
+  const [loading, setLoading] = useState(true)
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
 
   const location = useLocation();
   const navigate = useNavigate();
+
+  const fetchSetting = async () => {
+    try {
+      const data = await getAllSettings();
+      setSettingData(data.data.settings[0])
+      // console.log(settingData)
+    } catch (error) {
+      message.error("Failed to load settings.");
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchVendor = async () => {
+    try {
+      const res = await getVendorProfile();
+      const vendorData = res.data.vendor;
+      setVendor(vendorData);
+    } catch (err) {
+      message.error('Failed to load vendor profile');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { fetchSetting(), fetchVendor()}, [])
+
 
   const pathSnippets = location.pathname.split('/').filter(i => i);
   const labelMap = {
@@ -37,12 +70,12 @@ const VendorLayout = () => {
 
   return (
     <>
-    <title>Go Rabbit | Vendor Panel</title>
+      <title>Go Rabit | Vendor Panel</title>
       <Layout style={{ minHeight: '100vh' }}>
-        <VendorSidebar collapsed={collapsed} setCollapsed={setCollapsed} />
+        <VendorSidebar collapsed={collapsed} setCollapsed={setCollapsed} settingData={settingData} />
 
         <Layout>
-          <VendorHeader collapsed={collapsed} setCollapsed={setCollapsed} background={colorBgContainer} />
+          <VendorHeader collapsed={collapsed} setCollapsed={setCollapsed} background={colorBgContainer} settingData={settingData} vendorData={vendor}/>
 
           <Content
             style={{
@@ -59,7 +92,7 @@ const VendorLayout = () => {
             <Outlet />
           </Content>
 
-          <VendorFooter />
+          <VendorFooter settingData={settingData} />
         </Layout>
       </Layout>
     </>

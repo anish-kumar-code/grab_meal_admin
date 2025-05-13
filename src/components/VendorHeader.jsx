@@ -10,11 +10,11 @@ import { useAuth } from '../context/AuthContext';
 const { Header } = Layout;
 const { Text } = Typography;
 
-function VendorHeader({ collapsed, setCollapsed, background }) {
+function VendorHeader({ collapsed, setCollapsed, background, settingData, vendorData }) {
     const navigate = useNavigate();
     const [currentTime, setCurrentTime] = useState(new Date());
     const { vendorLogout } = useAuth();
-
+    // console.log(settingData)
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentTime(new Date());
@@ -85,7 +85,7 @@ function VendorHeader({ collapsed, setCollapsed, background }) {
                         onClick={() => setCollapsed(!collapsed)}
                         className="text-xl w-12 h-12 text-green-600 flex items-center justify-center"
                     />
-                    <Text strong className="text-xl text-green-600 hidden sm:block">Go Rabbit</Text>
+                    <Text strong className="text-xl text-green-600 hidden sm:block">{settingData.brandName}</Text>
                 </div>
 
                 <div className="flex items-center gap-6">
@@ -110,9 +110,13 @@ function VendorHeader({ collapsed, setCollapsed, background }) {
                             <Avatar
                                 size={36}
                                 className="bg-green-600 flex items-center justify-center"
-                                icon={<UserOutlined className="text-lg" />}
-                            />
-                            <Text strong className="text-green-600 font-semibold">Vendor</Text>
+                                
+                            >
+                                {vendorData.profileImg ? (<img src={`${BASE_URL}/${vendorData.profileImg}`} alt="" />) : (<img src="https://static.vecteezy.com/system/resources/thumbnails/059/171/711/small_2x/wonderful-rustic-portrait-of-a-man-with-a-thoughtful-gaze-and-a-gentle-smile-lit-by-a-warm-comforting-light-in-a-kind-compassionate-style-genuine-png.png"/>)}
+                                
+                                
+                            </Avatar>
+                            <Text strong className="text-green-600 font-semibold">{vendorData.name}</Text>
                             <FaAngleRight className="text-green-600 text-sm" />
                         </div>
                     </Dropdown>

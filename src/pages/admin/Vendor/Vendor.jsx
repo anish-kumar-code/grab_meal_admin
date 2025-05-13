@@ -1,38 +1,43 @@
-import { Input, Modal } from 'antd'
+import { Input, message, Modal } from 'antd'
 import React, { useEffect, useState } from 'react'
 import VendorTable from './components/VendorTable'
-import { getAllVendor } from '../../../services/apiVendor'
+import { deleteVendor, getAllVendor } from '../../../services/apiVendor'
 
 function Vendor() {
     const [searchText, setSearchText] = useState('');
     const [dataSource, setDataSource] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        setLoading(true)
-        const fetchVendor = async () => {
-            try {
-                const res = await getAllVendor()
-                setDataSource(res)
-            } catch (error) {
-                console.log(error)
-            } finally {
-                setLoading(false)
-            }
-        }
-        fetchVendor()
-    }, [])
+    useEffect(() => { fetchVendor() }, [])
 
-    const handleDelete = (vendor) => {
-        console.log(vendor)
+    const fetchVendor = async () => {
+        setLoading(true)
+        try {
+            const res = await getAllVendor()
+            setDataSource(res)
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleDelete = (record) => {
+        console.log(record)
         Modal.confirm({
             title: 'Delete Vendor',
-            content: `Are you sure you want to delete "${vendor.vendorname}"?`,
+            content: `Are you sure you want to delete "${record.name}"?`,
             okText: 'Delete',
             okType: 'danger',
             cancelText: 'Cancel',
-            onOk: () => {
-                console.log('Deleting category:', vendor);
+            onOk: async () => {
+                try {
+                    await deleteVendor(record._id);
+                    message.success("Vendor deleted successfully!");
+                    fetchVendor();
+                } catch {
+                    message.error("Failed to delete vendor.");
+                }
             }
         });
     };

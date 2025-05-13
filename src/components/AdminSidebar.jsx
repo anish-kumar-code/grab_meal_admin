@@ -9,6 +9,7 @@ import { TbCategory2 } from 'react-icons/tb'
 import { MdOutlineCategory } from 'react-icons/md'
 import { FaClipboardList, FaRegUser } from 'react-icons/fa'
 import { IoFastFoodOutline, IoImagesOutline, IoSettingsOutline, IoStorefront } from 'react-icons/io5'
+import { GiTakeMyMoney } from "react-icons/gi";
 import { FaArrowRightToBracket } from 'react-icons/fa6'
 import { useAuth } from '../context/AuthContext'
 
@@ -17,115 +18,49 @@ const AdminSidebar = ({ collapsed, settingData }) => {
     const location = useLocation()
     const BASE_URL = import.meta.env.VITE_BASE_URL;
 
+    // Derive path segments after '/admin'
     const pathSnippets = location.pathname.split('/').slice(2)
-    const selectedKey = pathSnippets[pathSnippets.length - 1] || 'dashboard'
     const openKey = pathSnippets.length > 1 ? pathSnippets[0] : ''
+    const rawSelected = pathSnippets[pathSnippets.length - 1] || 'dashboard'
+
+    // Build a unique selectedKey when inside a submenu
+    const selectedKey = openKey ? `${openKey}-${rawSelected}` : rawSelected
     const [openKeys, setOpenKeys] = useState(openKey ? [openKey] : [])
-    const { adminLogout } = useAuth();
 
     useEffect(() => {
         setOpenKeys(openKey ? [openKey] : [])
     }, [openKey])
 
+    const { adminLogout } = useAuth();
+
     const menuItems = [
+        { type: 'divider' },
+        { key: 'dashboard', icon: <LuLayoutDashboard size={18} />, label: 'Dashboard', onClick: () => navigate('/admin') },
+        { key: 'banner', icon: <IoImagesOutline size={18} />, label: 'Banner', onClick: () => navigate('/admin/banner') },
+        { key: 'category', icon: <TbCategory2 size={18} />, label: 'Category', onClick: () => navigate('/admin/category') },
+        { key: 'sub-category', icon: <MdOutlineCategory size={18} />, label: 'Sub Category', onClick: () => navigate('/admin/sub-category') },
+        { key: 'product', icon: <IoFastFoodOutline size={18} />, label: 'Product', onClick: () => navigate('/admin/product') },
+        { key: 'vendor', icon: <LuUsers size={18} />, label: 'Vendor', onClick: () => navigate('/admin/vendor') },
+        { key: 'shop', icon: <IoStorefront size={18} />, label: 'Shop', onClick: () => navigate('/admin/shop') },
+        { key: 'order', icon: <FaClipboardList size={18} />, label: 'Order', onClick: () => navigate('/admin/order') },
         {
-            type: 'divider'
-        },
-        {
-            key: 'dashboard',
-            icon: <LuLayoutDashboard size={18} />,
-            label: 'Dashboard',
-            onClick: () => navigate('/admin')
-        },
-        {
-            key: 'banner',
-            icon: <IoImagesOutline size={18} />,
-            label: 'Banner',
-            onClick: () => navigate('/admin/banner')
-        },
-        {
-            key: 'category',
-            icon: <TbCategory2 size={18} />,
-            label: 'Category',
-            onClick: () => navigate('/admin/category')
-        },
-        {
-            key: 'sub-category',
-            icon: <MdOutlineCategory size={18} />,
-            label: 'Sub Category',
-            onClick: () => navigate('/admin/sub-category')
-        },
-        {
-            key: 'product',
-            icon: <IoFastFoodOutline size={18} />,
-            label: 'Product',
-            onClick: () => navigate('/admin/product')
-        },
-        {
-            key: 'vendor',
-            icon: <LuUsers size={18} />,
-            label: 'Vendor',
-            onClick: () => navigate('/admin/vendor')
-        },
-        {
-            key: 'shop',
-            icon: <IoStorefront size={18} />,
-            label: 'Shop',
-            onClick: () => navigate('/admin/shop')
-        },
-        {
-            key: 'order',
-            icon: <FaClipboardList size={18} />,
-            label: 'Order',
-            onClick: () => navigate('/admin/order')
-        },
-        {
-            key: 'user',
-            icon: <FaRegUser size={18} />,
-            label: 'User',
-            onClick: () => navigate('/admin/user')
-        },
-        {
-            key: 'settings',
-            icon: <IoSettingsOutline size={18} />,
-            label: 'Settings',
-            children: [
-                {
-                    key: 'profile',
-                    label: 'Profile',
-                    onClick: () => navigate('/admin/settings/profile')
-                },
-                {
-                    key: 'charges',
-                    label: 'Site',
-                    onClick: () => navigate('/admin/settings/charges')
-                },
-                {
-                    key: 'terms-and-conditions',
-                    label: 'Terms & Conditions',
-                    onClick: () => navigate('/admin/settings/terms-and-conditions')
-                },
-                {
-                    key: 'privacy-policy',
-                    label: 'Privacy Policy',
-                    onClick: () => navigate('/admin/settings/privacy-policy')
-                },
-                {
-                    key: 'refund-policy',
-                    label: 'Refund Policy',
-                    onClick: () => navigate('/admin/settings/refund-policy')
-                }
+            key: 'request', icon: <GiTakeMyMoney size={18} />, label: 'Payment Request', children: [
+                { key: 'request-vendor', label: 'Vendor Request', onClick: () => navigate('/admin/request/vendor') },
+                { key: 'request-driver', label: 'Driver Request', onClick: () => navigate('/admin/request/driver') }
             ]
         },
+        { key: 'user', icon: <FaRegUser size={18} />, label: 'User', onClick: () => navigate('/admin/user') },
         {
-            type: 'divider'
+            key: 'settings', icon: <IoSettingsOutline size={18} />, label: 'Settings', children: [
+                // { key: 'settings-profile', label: 'Profile', onClick: () => navigate('/admin/settings/profile') },
+                { key: 'settings-charges', label: 'Site', onClick: () => navigate('/admin/settings/charges') },
+                { key: 'settings-terms-and-conditions', label: 'Terms & Conditions', onClick: () => navigate('/admin/settings/terms-and-conditions') },
+                { key: 'settings-privacy-policy', label: 'Privacy Policy', onClick: () => navigate('/admin/settings/privacy-policy') },
+                { key: 'settings-refund-policy', label: 'Refund Policy', onClick: () => navigate('/admin/settings/refund-policy') }
+            ]
         },
-        {
-            key: 'logout',
-            icon: <FaArrowRightToBracket size={18} />,
-            label: 'Logout',
-            onClick: () => { adminLogout(); navigate("/admin/login"); }
-        },
+        { type: 'divider' },
+        { key: 'logout', icon: <FaArrowRightToBracket size={18} />, label: 'Logout', onClick: () => { adminLogout(); navigate('/admin/login'); } }
     ]
 
     return (
@@ -139,14 +74,8 @@ const AdminSidebar = ({ collapsed, settingData }) => {
             style={{ height: '100vh', position: 'sticky', top: 0, overflow: 'auto' }}
         >
             <div className="flex items-center justify-center py-4">
-                <Avatar
-                    size={collapsed ? 40 : 64}
-                    src={`${BASE_URL}/${settingData.logo}`}
-                    className="transition-all duration-300"
-                />
-                {!collapsed && (
-                    <span className="ml-3 font-semibold text-2xl">{settingData.brandName}</span>
-                )}
+                <Avatar size={collapsed ? 40 : 64} src={`${BASE_URL}/${settingData.logo}`} className="transition-all duration-300" />
+                {!collapsed && <span className="ml-3 font-semibold text-2xl">{settingData.brandName}</span>}
             </div>
 
             <Menu
@@ -154,7 +83,7 @@ const AdminSidebar = ({ collapsed, settingData }) => {
                 theme="light"
                 selectedKeys={[selectedKey]}
                 openKeys={openKeys}
-                onOpenChange={(keys) => setOpenKeys(keys)}
+                onOpenChange={keys => setOpenKeys(keys)}
                 items={menuItems}
                 className="text-[15px] font-medium"
             />
