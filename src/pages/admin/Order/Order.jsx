@@ -1,11 +1,13 @@
-import { Breadcrumb, Button, Input, Modal } from 'antd'
-import React, { useState } from 'react'
+import { Breadcrumb, Button, Input, message, Modal } from 'antd'
+import React, { useEffect, useState } from 'react'
 import { FaPlus } from 'react-icons/fa'
 import { Link } from 'react-router'
 import OrderTable from './components/OrderTable'
+import { getAllOrder } from '../../../services/vendor/apiOrder'
 
 function Order() {
     const [searchText, setSearchText] = useState('');
+
 
     const handleDelete = (user) => {
         Modal.confirm({

@@ -41,7 +41,10 @@ import Cms from './pages/web/Cms/Cms'
 import AddProduct from './pages/vendor/Shop/AddProduct'
 import AllProduct from './pages/vendor/Shop/AllProduct'
 import ProductDetailsForVendor from './pages/vendor/Products/ProductDetails'
+import VendorOrder from './pages/vendor/Order/Order'
 import Order from './pages/admin/Order/Order'
+
+
 import OrderDetails from './pages/admin/Order/components/OrderDetails'
 import OrderDetailsPage from './pages/admin/Order/components/OrderDetailsPage'
 import Wallet from './pages/vendor/wallet/Wallet'
@@ -94,6 +97,7 @@ function App() {
           <Route path='shop/add/:shopId' element={<AddProduct />} />
           <Route path='shop/:shopId' element={<AllProduct />} />
           <Route path='shop/:shopId/product/:productId' element={<ProductDetailsForVendor />} />
+          <Route path='order' element={<VendorOrder />} />
           <Route path='wallet' element={<Wallet />} />
           <Route path='wallet/:shopId' element={<ShopWalletHistory />} />
           <Route path='wallet/history' element={<WalletHistory />} />

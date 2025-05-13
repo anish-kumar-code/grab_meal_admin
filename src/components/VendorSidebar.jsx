@@ -6,6 +6,7 @@ import { FaRegUser, FaStore } from 'react-icons/fa';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { MdLogout } from 'react-icons/md';
 import { useAuth } from '../context/AuthContext';
+import { FaCartShopping } from 'react-icons/fa6';
 
 const { Sider } = Layout;
 
@@ -50,6 +51,12 @@ function VendorSidebar({ collapsed, settingData }) {
             icon: <FaStore style={{ fontSize: "18px" }} />,
             label: 'My Shops',
             onClick: () => navigate('/vendor/shop'),
+        },
+        {
+            key: 'orders',
+            icon: <FaCartShopping style={{ fontSize: "18px" }} />,
+            label: 'My Orders',
+            onClick: () => navigate('/vendor/order'),
         },
         {
             key: 'business',
