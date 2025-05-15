@@ -1,8 +1,9 @@
 import { Breadcrumb, Button, Form, message, Spin } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router';
+import { Link, useParams } from 'react-router';
 import { getAllSettings, updateSettings } from '../../../../services/apiSettings';
+import { getAllCms, updateCms } from '../../../../services/admin/apiCms';
 
 function TermConditions() {
     const [termConditions, setTermConditions] = useState("")
@@ -11,20 +12,21 @@ function TermConditions() {
     const [loading, setLoading] = useState(true);
     const [updateLoading, setUpdateLoading] = useState(false);
 
-    const fetchSetting = async () => {
+    const { type } = useParams()
+    
+    const fetchCms = async () => {
         try {
-            const data = await getAllSettings();
-            // console.log(data.data.settings[0].termAndConditions)
-            setTermConditions(data.data.settings[0].termAndConditions)
-            setdata(data.data.settings[0])
+            const data = await getAllCms(type);
+            setTermConditions(data.cmsData.termAndConditions)
+            setdata(data.cmsData)
         } catch (error) {
-            message.error("Failed to load settings.");
+            message.error("Failed to load cms Data");
         } finally {
             setLoading(false)
         }
     }
 
-    useEffect(() => { fetchSetting() }, [])
+    useEffect(() => { fetchCms() }, [])
 
     const onFinish = async () => {
         setUpdateLoading(true)
@@ -33,11 +35,12 @@ function TermConditions() {
         }
 
         try {
-            const res = await updateSettings(data._id, fromData)
+            const res = await updateCms(data._id, fromData)
+            // console.log(res.cmsData)
             message.success('Term and condition updated');
         } catch (error) {
             message.error('Error updating term and conditions');
-        }finally{
+        } finally {
             setUpdateLoading(false)
         }
     };

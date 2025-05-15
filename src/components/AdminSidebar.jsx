@@ -7,7 +7,7 @@ import { useNavigate, useLocation } from 'react-router'
 import { LuLayoutDashboard, LuUsers } from "react-icons/lu"
 import { TbCategory2 } from 'react-icons/tb'
 import { MdOutlineCategory } from 'react-icons/md'
-import { FaClipboardList, FaRegUser } from 'react-icons/fa'
+import { FaClipboardList, FaRegUser, FaUserClock } from 'react-icons/fa'
 import { IoFastFoodOutline, IoImagesOutline, IoSettingsOutline, IoStorefront } from 'react-icons/io5'
 import { GiTakeMyMoney } from "react-icons/gi";
 import { FaArrowRightToBracket } from 'react-icons/fa6'
@@ -50,6 +50,20 @@ const AdminSidebar = ({ collapsed, settingData }) => {
             ]
         },
         { key: 'user', icon: <FaRegUser size={18} />, label: 'User', onClick: () => navigate('/admin/user') },
+        {
+            key: 'vendor-cms', icon: <FaUserClock size={18} />, label: 'Vendor CMS', children: [
+                { key: 'vendor-terms-and-conditions', label: 'Terms & Conditions', onClick: () => navigate('/admin/terms-and-conditions/vendor') },
+                { key: 'vendor-privacy-policy', label: 'Privacy Policy', onClick: () => navigate('/admin/privacy-policy/vendor') },
+                { key: 'vendor-refund-policy', label: 'Refund Policy', onClick: () => navigate('/admin/refund-policy/vendor') }
+            ]
+        },
+        {
+            key: 'user-cms', icon: <FaUserClock size={18} />, label: 'User CMS', children: [
+                { key: 'user-terms-and-conditions', label: 'Terms & Conditions', onClick: () => navigate('/admin/terms-and-conditions/user') },
+                { key: 'user-privacy-policy', label: 'Privacy Policy', onClick: () => navigate('/admin/privacy-policy/user') },
+                { key: 'user-refund-policy', label: 'Refund Policy', onClick: () => navigate('/admin/refund-policy/user') }
+            ]
+        },
         {
             key: 'settings', icon: <IoSettingsOutline size={18} />, label: 'Settings', children: [
                 // { key: 'settings-profile', label: 'Profile', onClick: () => navigate('/admin/settings/profile') },

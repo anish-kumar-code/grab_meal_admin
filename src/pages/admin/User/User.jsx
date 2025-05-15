@@ -1,13 +1,31 @@
 import { Breadcrumb, Button, Input, Modal } from 'antd'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaPlus } from 'react-icons/fa'
 import { Link } from 'react-router'
 import UserTable from './components/UserTable'
 import AddSubCategoryModel from '../SubCategory/components/AddSubCategoryModel'
 import EditSubCategoryModel from '../SubCategory/components/EditSubCategoryModel'
+import { getAllUser } from '../../../services/admin/apiUser'
 
 function User() {
+    const [user, setUser] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [searchText, setSearchText] = useState('');
+
+    const fetchUser = async () => {
+        setLoading(true);
+        try {
+            const res = await getAllUser();
+            setUser(res.data);
+        } catch {
+            message.error("Failed to load user.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => { fetchUser(); }, []);
+
 
     const handleDelete = (user) => {
         Modal.confirm({
@@ -26,7 +44,7 @@ function User() {
         <>
             <div className='lg:px-10 px-5 my-8 md:flex items-center gap-4 justify-between '>
                 <Input.Search
-                    placeholder="Search by name"
+                    placeholder="Search by mobile no"
                     onChange={(e) => setSearchText(e.target.value)}
                     style={{
                         maxWidth: 300,
@@ -44,7 +62,7 @@ function User() {
                     Add Sub Category
                 </Button> */}
             </div>
-            <UserTable searchText={searchText} onDelete={handleDelete} />
+            <UserTable searchText={searchText} onDelete={handleDelete} data={user}/>
 
             {/* modal */}
             {/* <AddSubCategoryModel

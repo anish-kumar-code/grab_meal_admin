@@ -1,8 +1,9 @@
 import { Breadcrumb, Button, Form, message, Spin } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router';
+import { Link, useParams } from 'react-router';
 import { getAllSettings, updateSettings } from '../../../../services/apiSettings';
+import { getAllCms, updateCms } from '../../../../services/admin/apiCms';
 
 function PrivacyPolicyPage() {
     const [privacyPolicy, setPrivacyPolicy] = useState("")
@@ -11,33 +12,34 @@ function PrivacyPolicyPage() {
     const [loading, setLoading] = useState(true);
     const [updateLoading, setUpdateLoading] = useState(false);
 
-    const fetchSetting = async () => {
+    const { type } = useParams()
+
+    const fetchCms = async () => {
         try {
-            const data = await getAllSettings();
-            // console.log(data.data.settings[0].termAndConditions)
-            setPrivacyPolicy(data.data.settings[0].privacyPolicy)
-            setdata(data.data.settings[0])
+            const data = await getAllCms(type);
+            setPrivacyPolicy(data.cmsData.privacyPolicy)
+            setdata(data.cmsData)
         } catch (error) {
-            message.error("Failed to load settings.");
+            message.error("Failed to load cms Data.");
         } finally {
             setLoading(false)
         }
     }
 
-    useEffect(() => { fetchSetting() }, [])
+    useEffect(() => { fetchCms() }, [])
 
-    const onFinish = async() => {
+    const onFinish = async () => {
         setUpdateLoading(true)
         const fromData = {
-            privacyPolicy : privacyPolicy
+            privacyPolicy: privacyPolicy
         }
 
         try {
-            const res = await updateSettings(data._id,fromData)
+            const res = await updateCms(data._id, fromData)
             message.success('Privacy policy updated');
         } catch (error) {
             message.error('Error updating privacy policy');
-        }finally{
+        } finally {
             setUpdateLoading(false)
         }
     };
@@ -52,7 +54,7 @@ function PrivacyPolicyPage() {
                     layout="vertical"
                     onFinish={onFinish}
                 >
-                    <TextArea autoSize={{minRows:20}} placeholder="Enter Privacy Policy here ..." value={privacyPolicy} onChange={(e)=> setPrivacyPolicy(e.target.value)} required/>
+                    <TextArea autoSize={{ minRows: 20 }} placeholder="Enter Privacy Policy here ..." value={privacyPolicy} onChange={(e) => setPrivacyPolicy(e.target.value)} required />
 
                     <Form.Item>
                         <Button type="primary" htmlType="submit" size="large" className='mt-4' loading={updateLoading}>

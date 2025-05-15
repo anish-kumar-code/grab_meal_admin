@@ -21,8 +21,17 @@ import Login from './pages/admin/Auth/Login'
 import AdminPrivateRoute from './components/AdminPrivateRoute'
 import ProductDetails from './pages/admin/Products/ProductDetails'
 import PaymentRequest from './pages/admin/Payment-Request/PaymentRequest'
+import Profile from './pages/admin/Settings/components/Profile'
+import Charges from './pages/admin/Settings/components/Charges'
+import TermConditions from './pages/admin/Settings/components/Term&Conditions'
+import PrivacyPolicyPage from './pages/admin/Settings/components/PrivacyPolicyPage'
+import RefundPolicy from './pages/admin/Settings/components/RefundPolicy'
+import Order from './pages/admin/Order/Order'
+import OrderDetails from './pages/admin/Order/components/OrderDetails'
+import OrderDetailsPage from './pages/admin/Order/components/OrderDetailsPage'
 
 // vendor
+import Cms from './pages/web/Cms/Cms'
 import VendorPrivateRoute from './components/VendorPrivateRoute';
 import VendorLayout from './layout/vendorLayout'
 import VendorLogin from './pages/vendor/auth/Login'
@@ -32,21 +41,10 @@ import VendorShop from './pages/vendor/Shop/Shop'
 import VendorSettings from './pages/vendor/Settings/Settings'
 import VendorProfile from './pages/vendor/Profile/Profile'
 import VendorAddShop from './pages/vendor/Shop/components/AddShop'
-import Profile from './pages/admin/Settings/components/Profile'
-import Charges from './pages/admin/Settings/components/Charges'
-import TermConditions from './pages/admin/Settings/components/Term&Conditions'
-import PrivacyPolicyPage from './pages/admin/Settings/components/PrivacyPolicyPage'
-import RefundPolicy from './pages/admin/Settings/components/RefundPolicy'
-import Cms from './pages/web/Cms/Cms'
 import AddProduct from './pages/vendor/Shop/AddProduct'
 import AllProduct from './pages/vendor/Shop/AllProduct'
 import ProductDetailsForVendor from './pages/vendor/Products/ProductDetails'
 import VendorOrder from './pages/vendor/Order/Order'
-import Order from './pages/admin/Order/Order'
-
-
-import OrderDetails from './pages/admin/Order/components/OrderDetails'
-import OrderDetailsPage from './pages/admin/Order/components/OrderDetailsPage'
 import Wallet from './pages/vendor/wallet/Wallet'
 import ShopWalletHistory from './pages/vendor/wallet/ShopWalletHistory'
 import WalletHistory from './pages/vendor/wallet/WalletHistory'
@@ -82,9 +80,9 @@ function App() {
           <Route path='settings' element={<Settings />} />
           <Route path='settings/profile' element={<Profile />} />
           <Route path='settings/charges' element={<Charges />} />
-          <Route path='settings/terms-and-conditions' element={<TermConditions />} />
-          <Route path='settings/privacy-policy' element={<PrivacyPolicyPage />} />
-          <Route path='settings/refund-policy' element={<RefundPolicy />} />
+          <Route path='terms-and-conditions/:type' element={<TermConditions />} />
+          <Route path='privacy-policy/:type' element={<PrivacyPolicyPage />} />
+          <Route path='refund-policy/:type' element={<RefundPolicy />} />
         </Route>
 
         {/* vendor route */}

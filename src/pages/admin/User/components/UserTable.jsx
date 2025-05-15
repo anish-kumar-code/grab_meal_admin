@@ -1,21 +1,15 @@
 import { Avatar, Button, Space, Switch, Table, Tag } from 'antd'
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaUser } from 'react-icons/fa';
 import dataSource from '../data.json'
 import { IoMdEye } from 'react-icons/io';
 import { useNavigate } from 'react-router';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-const UserTable = ({ searchText, onDelete }) => {
+const UserTable = ({ searchText, onDelete, data }) => {
     const navigate = useNavigate();
 
-    // Transform the data to match table structure
-    const transformedData = dataSource.map(item => ({
-        id: item.username,
-        name: item.name,
-        email: item.email,
-        phone: item.phone,
-        image: item.image,
-        status: item.status
-    }));
+    console.log(data)
+
 
     const handleViewDetails = (record) => {
         navigate(`/vendor/${record.id}`);
@@ -26,11 +20,15 @@ const UserTable = ({ searchText, onDelete }) => {
             title: 'Avatar',
             key: 'avatar',
             align: "center",
-            render: (_, { image }) => (
-                <Avatar size={40} style={{ backgroundColor: '#f56a00' }}>
-                    {image || '?'}
-                </Avatar>
-            )
+            render: (_, { profileImage }) => {
+                const src = profileImage ? `${BASE_URL}/${profileImage}` : undefined;
+                return (<Avatar
+                    size={40}
+                    src={src}
+                    icon={!src && <FaUser />}
+                    style={{ backgroundColor: '#f56a00' }}
+                />)
+            }
         },
         {
             title: 'Name',
@@ -46,14 +44,8 @@ const UserTable = ({ searchText, onDelete }) => {
         },
         {
             title: 'Mobile no',
-            dataIndex: 'phone',
-            key: 'phone',
-            align: "center"
-        },
-        {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
+            dataIndex: 'mobileNo',
+            key: 'mobileNo',
             align: "center"
         },
         {
@@ -62,21 +54,22 @@ const UserTable = ({ searchText, onDelete }) => {
             key: 'status',
             align: "center",
             render: (_, { status }) => (
-                <Switch defaultChecked={status} onChange={onChange} />
+                // <Switch defaultChecked={status} onChange={onChange} />
+                <Tag color={status ? "green" : "red"}>{status ? "Verified" : "Not verified"}</Tag>
             )
         },
-        {
-            title: 'Action',
-            key: 'action',
-            align: "right",
-            render: (_, record) => (
-                <Space size="small">
-                    {/* <Button type="primary" icon={<IoMdEye />} onClick={() => handleViewDetails(record)}></Button> */}
-                    {/* <Button type="primary" icon={<FaEdit />} onClick={() => onEdit(record)}>Edit</Button> */}
-                    <Button type="primary" danger icon={<FaTrash />} onClick={() => onDelete(record)}></Button>
-                </Space>
-            )
-        }
+        // {
+        //     title: 'Action',
+        //     key: 'action',
+        //     align: "right",
+        //     render: (_, record) => (
+        //         <Space size="small">
+        //             <Button type="primary" icon={<IoMdEye />} onClick={() => handleViewDetails(record)}></Button>
+        //             <Button type="primary" icon={<FaEdit />} onClick={() => onEdit(record)}>Edit</Button>
+        //             <Button type="primary" danger icon={<FaTrash />} onClick={() => onDelete(record)}></Button>
+        //         </Space>
+        //     )
+        // }
     ];
 
     const onChange = checked => {
@@ -84,7 +77,7 @@ const UserTable = ({ searchText, onDelete }) => {
     };
 
     return <Table
-        dataSource={transformedData.filter(item => item.name.toLowerCase().includes(searchText.toLowerCase()))}
+        dataSource={data.filter(item => item.mobileNo.toLowerCase().includes(searchText.toLowerCase()))}
         // dataSource={transformedData}
         columns={columns}
         rowKey="id"

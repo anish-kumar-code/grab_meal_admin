@@ -1,7 +1,9 @@
 import { Button, Space, Switch, Table } from 'antd';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-const BannerTable = ({ searchText, onEdit, onDelete }) => {
+const BannerTable = ({ searchText, onEdit, onDelete, data, loading }) => {
+
     const columns = [
         {
             title: 'Image',
@@ -9,7 +11,7 @@ const BannerTable = ({ searchText, onEdit, onDelete }) => {
             align: "center",
             render: (_, { image }) => (
                 <img
-                    src={image}
+                    src={`${BASE_URL}/${image}`}
                     alt="banner"
                     style={{
                         width: 100,
@@ -30,7 +32,8 @@ const BannerTable = ({ searchText, onEdit, onDelete }) => {
             title: 'Service',
             dataIndex: 'service',
             key: 'service',
-            align: "center"
+            align: "center",
+            render: (_, record) => record.serviceId.name || "abc"
         },
         {
             title: 'Section',
@@ -38,50 +41,36 @@ const BannerTable = ({ searchText, onEdit, onDelete }) => {
             key: 'section',
             align: "center"
         },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            align: "center",
-            render: (_, { status }) => (
-                <Switch
-                    checked={status === 'active'}
-                    onChange={(checked) => {
-                        console.log(`switch to ${checked}`);
-                        // Here you would typically make an API call to update the status
-                    }}
-                />
-            )
-        },
-        {
-            title: 'Action',
-            key: 'action',
-            align: "right",
-            render: (_, record) => (
-                <Space size="small">
-                    <Button type="primary" icon={<FaEdit />} onClick={() => onEdit(record)}>Edit</Button>
-                    <Button type="primary" danger icon={<FaTrash />} onClick={() => onDelete(record)}>Delete</Button>
-                </Space>
-            )
-        }
-    ];
-
-    // This would typically come from an API or state management
-    const dataSource = [
-        {
-            id: 1,
-            image: 'https://example.com/banner1.jpg',
-            title: 'Summer Sale',
-            service: 'Food',
-            section: 'Offer',
-            status: 'active'
-        },
-        // Add more banner data as needed
+        // {
+        //     title: 'Status',
+        //     dataIndex: 'status',
+        //     key: 'status',
+        //     align: "center",
+        //     render: (_, { status }) => (
+        //         <Switch
+        //             checked={status === 'active'}
+        //             onChange={(checked) => {
+        //                 console.log(`switch to ${checked}`);
+        //             }}
+        //         />
+        //     )
+        // },
+        // {
+        //     title: 'Action',
+        //     key: 'action',
+        //     align: "right",
+        //     render: (_, record) => (
+        //         <Space size="small">
+        //             <Button type="primary" icon={<FaEdit />} onClick={() => onEdit(record)}>Edit</Button>
+        //             <Button type="primary" danger icon={<FaTrash />} onClick={() => onDelete(record)}>Delete</Button>
+        //         </Space>
+        //     )
+        // }
     ];
 
     return (
         <Table
-            dataSource={dataSource.filter(item =>
+            dataSource={data.filter(item =>
                 item.title.toLowerCase().includes(searchText.toLowerCase())
             )}
             columns={columns}
@@ -89,6 +78,7 @@ const BannerTable = ({ searchText, onEdit, onDelete }) => {
             bordered={false}
             size='small'
             className="lg:px-10 px-5"
+            loading={loading}
         />
     );
 };

@@ -1,16 +1,34 @@
 import { Breadcrumb, Button, Card, Input, Modal } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { FaPlus } from 'react-icons/fa';
 import BannerTable from './components/BannerTable';
 import AddBannerModel from './components/AddBannerModel';
 import EditBannerModel from './components/EditBannerModel';
+import { getAllBanner } from '../../../services/admin/apiBanner';
 
 function MainBanner() {
+    const [banner, setBanner] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [selectedBanner, setSelectedBanner] = useState(null);
+
+    const fetchBanner = async () => {
+        setLoading(true);
+        try {
+            const res = await getAllBanner();
+            setBanner(res.data);
+            // console.log(banner)
+        } catch {
+            message.error("Failed to load banner.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => { fetchBanner(); }, []);
 
     const showModal = () => {
         setIsModalOpen(true);
@@ -18,6 +36,7 @@ function MainBanner() {
 
     const handleOk = () => {
         setIsModalOpen(false);
+        fetchBanner();
     };
 
     const handleCancel = () => {
@@ -77,8 +96,10 @@ function MainBanner() {
             </div>
             <BannerTable
                 searchText={searchText}
+                data={banner}
                 onEdit={showEditModal}
                 onDelete={handleDelete}
+                loading={loading}
             />
 
             {/* Add Banner Modal */}

@@ -1,8 +1,9 @@
 import { Breadcrumb, Button, Form, message, Spin } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router';
+import { Link, useParams } from 'react-router';
 import { getAllSettings, updateSettings } from '../../../../services/apiSettings';
+import { getAllCms, updateCms } from '../../../../services/admin/apiCms';
 
 function RefundPolicy() {
     const [refundPolicy, setRefundPolicy] = useState("")
@@ -11,19 +12,21 @@ function RefundPolicy() {
     const [loading, setLoading] = useState(true);
     const [updateLoading, setUpdateLoading] = useState(false);
 
-    const fetchSetting = async () => {
+    const { type } = useParams()
+
+    const fetchCms = async () => {
         try {
-            const data = await getAllSettings();
-            setRefundPolicy(data.data.settings[0].refundPolicy)
-            setdata(data.data.settings[0])
+            const data = await getAllCms(type);
+            setRefundPolicy(data.cmsData.refundPolicy)
+            setdata(data.cmsData)
         } catch (error) {
-            message.error("Failed to load settings.");
+            message.error("Failed to load cms Data.");
         } finally {
             setLoading(false)
         }
     }
 
-    useEffect(() => { fetchSetting() }, [])
+    useEffect(() => { fetchCms() }, [])
 
     const onFinish = async () => {
         setUpdateLoading(true)
@@ -32,11 +35,11 @@ function RefundPolicy() {
         }
 
         try {
-            const res = await updateSettings(data._id, fromData)
+            const res = await updateCms(data._id, fromData)
             message.success('Refund policy updated');
         } catch (error) {
             message.error('Error updating refund policy');
-        }finally{
+        } finally {
             setUpdateLoading(false)
         }
     };
@@ -51,7 +54,7 @@ function RefundPolicy() {
                     layout="vertical"
                     onFinish={onFinish}
                 >
-                    <TextArea autoSize={{minRows:20}} placeholder="Enter Refund Policy here ..." value={refundPolicy} onChange={(e) => setRefundPolicy(e.target.value)} required />
+                    <TextArea autoSize={{ minRows: 20 }} placeholder="Enter Refund Policy here ..." value={refundPolicy} onChange={(e) => setRefundPolicy(e.target.value)} required />
 
                     <Form.Item>
                         <Button type="primary" htmlType="submit" size="large" className='mt-4' loading={updateLoading}>
